@@ -2,6 +2,7 @@ import {
 	ForbiddenException,
 	Injectable,
 	UnauthorizedException,
+	UnprocessableEntityException,
 } from '@nestjs/common'
 import { ConfigService } from '@nestjs/config'
 import { JwtService } from '@nestjs/jwt'
@@ -210,45 +211,21 @@ export class AuthService {
 	}
 
 	async refresh({ refreshToken }: RefreshTokenDto) {
-		const { username } = await this.jwt
+		const payload = await this.jwt
 			.verifyAsync(refreshToken, {
 				secret: this.config.get('JWT_REFRESH_SECRET'),
 			})
-			.catch(error => this.handleRefreshTokenExipred(error, refreshToken))
+			.catch(error => {
+				return this.handleRefreshTokenExipred(error, refreshToken)
+			})
 
-		const user = await this.utils
-			.checkUserByUsername(username)
-			.catch(error => tryCatchErrorHandling(error))
-
-		if ('nik' in user && user.refreshToken !== refreshToken) {
-			await this.utils
-				.updateRefreshTokenEmployee({ refreshToken: null }, { id: user.id })
-				.catch(error => tryCatchErrorHandling(error))
-
-			throw new ForbiddenException('Token not match, please re-login')
+		if ('username' in payload) {
+			throw new UnprocessableEntityException(
+				'UnprocessableEntityException - The servive only available on expired JWT token'
+			)
 		}
 
-		if ('username' in user && user.refreshToken !== refreshToken) {
-			await this.utils
-				.updateSingleCandidate({ refreshToken: null }, { id: user.id })
-				.catch(error => tryCatchErrorHandling(error))
-
-			throw new ForbiddenException('Token not match, please re-login')
-		}
-
-		const refreshTokenUpdated = await this.generateAndUpdateToken(user)
-
-		return {
-			message: `You are validated, welcome ${
-				'nik' in refreshTokenUpdated?.data
-					? refreshTokenUpdated?.data?.name
-					: refreshTokenUpdated?.data?.username
-			}`,
-			result:
-				'nik' in refreshTokenUpdated?.data
-					? new EmployeeEntity({ ...user, token: refreshTokenUpdated?.token })
-					: new CandidateEntity({ ...user, token: refreshTokenUpdated?.token }),
-		}
+		if ('message' in payload) return payload
 	}
 
 	private async updateAndSendEmail<TDataToUpdate>(
@@ -355,26 +332,49 @@ export class AuthService {
 		error: ExceptionInterface,
 		refreshToken: string
 	) {
-		if (error?.message === 'jwt expired') {
-			const { sub: id, username } = JSON.parse(
+		if ('message' in error && error?.message === 'jwt expired') {
+			const { username } = JSON.parse(
 				Buffer.from(refreshToken.split('.')[1], 'base64').toString()
 			)
 
-			if (!username.includes('@')) {
-				await this.utils
-					.updateSingleCandidate({ refreshToken: null }, { id })
-					.catch(error => tryCatchErrorHandling(error))
+			const user = await this.utils
+				.checkUserByUsername(username)
+				.catch(error => tryCatchErrorHandling(error))
+
+			if (user.refreshToken !== refreshToken) {
+				if ('username' in user) {
+					await this.utils
+						.updateSingleCandidate({ refreshToken: null }, { id: user.id })
+						.catch(error => tryCatchErrorHandling(error))
+				}
+
+				if ('nik' in user) {
+					await this.utils
+						.updateRefreshTokenEmployee({ refreshToken: null }, { id: user.id })
+						.catch(error => tryCatchErrorHandling(error))
+				}
+
+				throw new UnauthorizedException(
+					'UnauthorizedException - Please login to continue'
+				)
 			}
 
-			if (username.includes('@')) {
-				await this.utils
-					.updateRefreshTokenEmployee({ refreshToken: null }, { id })
-					.catch(error => tryCatchErrorHandling(error))
-			}
+			const refreshTokenUpdated = await this.generateAndUpdateToken(user)
 
-			throw new UnauthorizedException(
-				'UnauthorizedException - Token expired, please login to continue'
-			)
+			return {
+				message: `You are validated, welcome ${
+					'nik' in refreshTokenUpdated?.data
+						? refreshTokenUpdated?.data?.name
+						: refreshTokenUpdated?.data?.username
+				}`,
+				result:
+					'nik' in refreshTokenUpdated?.data
+						? new EmployeeEntity({ ...user, token: refreshTokenUpdated?.token })
+						: new CandidateEntity({
+								...user,
+								token: refreshTokenUpdated?.token,
+						  }),
+			}
 		}
 
 		tryCatchErrorHandling(error)
