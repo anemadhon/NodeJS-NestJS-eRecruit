@@ -1,0 +1,172 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+    provider = "prisma-client-js"
+}
+
+datasource db {
+    provider = "postgresql"
+    url      = env("DATABASE_URL")
+}
+
+model Employee {
+    id        Int      @id @default(autoincrement())
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+
+    nik      String @unique
+    password String
+    name     String
+    email    String @unique
+    title    String
+
+    refreshToken String? @unique
+
+    candidateOverviews CandidateOverview[]
+
+    @@map("employees")
+}
+
+model Job {
+    id        Int      @id @default(autoincrement())
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+
+    addedAt   String
+    removedAt String?
+    name      String
+    slug      String
+    slot      Int
+
+    applicants Applicant[]
+
+    @@map("jobs")
+}
+
+model ProcessState {
+    id        Int      @id @default(autoincrement())
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+
+    state  String
+    tags   String
+    detail String
+
+    applicants Applicant[]
+
+    @@map("process_states")
+}
+
+model Candidate {
+    id        Int      @id @default(autoincrement())
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+
+    firstName         String
+    lastName          String?
+    username          String? @unique
+    password          String  @default("password")
+    passwordResetCode String?
+
+    email                 String  @unique
+    emailVerificationCode String? @unique
+    emailIsVerified       Boolean @default(false)
+
+    phone String
+
+    refreshToken String? @unique
+
+    candidateSocial     CandidateSocial?
+    candidateSkill      CandidateSkill?
+    candidateExperience CandidateExperience?
+
+    candidateOverviews CandidateOverview[]
+    applicants         Applicant[]
+
+    @@map("candidates")
+}
+
+model CandidateSocial {
+    id        Int      @id @default(autoincrement())
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+
+    whatsapp  String?
+    instagram String?
+    linkedin  String?
+    github    String?
+
+    candidate   Candidate? @relation(fields: [candidateId], references: [id])
+    candidateId Int?       @unique
+
+    @@map("candidate_socials")
+}
+
+model CandidateSkill {
+    id        Int      @id @default(autoincrement())
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+
+    skill String
+    level Int
+
+    candidate   Candidate @relation(fields: [candidateId], references: [id])
+    candidateId Int       @unique
+
+    @@map("candidate_skills")
+}
+
+model CandidateExperience {
+    id        Int      @id @default(autoincrement())
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+
+    company     String
+    title       String
+    joinedAt    DateTime @db.Date
+    endedAt     DateTime @db.Date
+    description String
+
+    candidate   Candidate @relation(fields: [candidateId], references: [id])
+    candidateId Int       @unique
+
+    @@map("candidate_experiences")
+}
+
+model CandidateOverview {
+    id        Int      @id @default(autoincrement())
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+
+    startedAt DateTime
+    overview  String
+    comment   String
+    status    String
+
+    candidate   Candidate @relation(fields: [candidateId], references: [id])
+    candidateId Int
+    employee    Employee  @relation(fields: [employeeId], references: [id])
+    employeeId  Int
+
+    @@map("candidate_overviews")
+}
+
+model Applicant {
+    id        Int      @id @default(autoincrement())
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+
+    submittedAt String
+
+    candidate   Candidate @relation(fields: [candidateId], references: [id])
+    candidateId Int
+
+    processState   ProcessState @relation(fields: [processStateId], references: [id])
+    processStateId Int
+
+    job   Job @relation(fields: [jobId], references: [id])
+    jobId Int
+
+    @@map("applicants")
+}
