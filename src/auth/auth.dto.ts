@@ -1,3 +1,4 @@
+import { ApiProperty } from '@nestjs/swagger'
 import {
 	IsEmail,
 	IsJWT,
@@ -10,21 +11,25 @@ import {
 export const usernameRegex = /^[a-zA-Z0-9_.-]*$/
 
 export class ValidationEmailDto {
+	@ApiProperty()
 	@IsEmail()
 	@IsNotEmpty()
 	email: string
 }
 
 export class ValidationAccountDto {
+	@ApiProperty()
 	@IsString()
 	@IsNotEmpty()
 	passwordResetCode: string
 
+	@ApiProperty()
 	@IsString()
 	@IsNotEmpty()
 	@Matches(usernameRegex)
 	username: string
 
+	@ApiProperty()
 	@IsString()
 	@IsNotEmpty()
 	@MinLength(6)
@@ -32,20 +37,24 @@ export class ValidationAccountDto {
 }
 
 export class VerificationEmailDto {
+	@ApiProperty()
 	@IsEmail()
 	@IsNotEmpty()
 	email: string
 
+	@ApiProperty()
 	@IsString()
 	@IsNotEmpty()
 	emailVerificationCode: string
 }
 
 export class LoginDto {
+	@ApiProperty()
 	@IsString()
 	@IsNotEmpty()
 	username: string
 
+	@ApiProperty()
 	@IsString()
 	@IsNotEmpty()
 	@MinLength(6)
@@ -53,6 +62,7 @@ export class LoginDto {
 }
 
 export class RefreshTokenDto {
+	@ApiProperty()
 	@IsNotEmpty()
 	@IsJWT()
 	refreshToken: string

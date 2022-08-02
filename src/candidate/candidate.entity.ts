@@ -1,20 +1,29 @@
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
 import { Exclude, Type } from 'class-transformer'
 import { ApplicantEntity } from 'src/applicant/applicant.entity'
 
 export class CandidateEntity {
+	@ApiProperty()
 	id: number
+	@ApiProperty()
 	email: string
+	@ApiProperty()
 	username: string | null
+	@ApiProperty()
 	firstName: string
+	@ApiProperty()
 	lastName: string | null
+	@ApiProperty()
 	phone: string
 
+	@ApiPropertyOptional()
 	token?: {
 		type: string
 		accessToken: string
 		refreshToken: string
 	}
 
+	@ApiPropertyOptional()
 	@Type(() => ApplicantEntity)
 	applicants?: ApplicantEntity[]
 

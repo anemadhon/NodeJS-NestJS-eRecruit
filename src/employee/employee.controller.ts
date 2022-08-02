@@ -10,12 +10,15 @@ import {
 	UseInterceptors,
 } from '@nestjs/common'
 import { AuthGuard } from '@nestjs/passport'
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger'
 import { AuthenticatedUser } from 'src/auth/auth-user.decorator'
 import { Roles } from 'src/auth/role/role.decorator'
 import { RolesGuard } from 'src/auth/role/role.guard'
 import { EmployeeEntity } from './employee.entity'
 import { EmployeeService } from './employee.service'
 
+@ApiTags('employee / admin')
+@ApiBearerAuth()
 @Roles('admin')
 @UseGuards(AuthGuard('jwt'), RolesGuard)
 @UseInterceptors(ClassSerializerInterceptor)

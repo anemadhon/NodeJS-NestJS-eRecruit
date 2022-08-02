@@ -10,6 +10,7 @@ import {
 	UseInterceptors,
 } from '@nestjs/common'
 import { AuthGuard } from '@nestjs/passport'
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger'
 import { CandidateEntity } from 'src/candidate/candidate.entity'
 import { EmployeeEntity } from 'src/employee/employee.entity'
 import { AuthenticatedUser } from './auth-user.decorator'
@@ -22,6 +23,7 @@ import {
 } from './auth.dto'
 import { AuthService } from './auth.service'
 
+@ApiTags('authentication')
 @Controller({ path: 'authentication', version: '1' })
 @UseInterceptors(ClassSerializerInterceptor)
 export class AuthController {
@@ -56,6 +58,7 @@ export class AuthController {
 		return this.authService.refresh(refreshToken)
 	}
 
+	@ApiBearerAuth()
 	@HttpCode(204)
 	@UseGuards(AuthGuard('jwt'))
 	@Post('logout')
