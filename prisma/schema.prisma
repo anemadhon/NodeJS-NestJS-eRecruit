@@ -96,6 +96,7 @@ model CandidateSocial {
     instagram String?
     linkedin  String?
     github    String?
+    resume    String?
 
     candidate   Candidate? @relation(fields: [candidateId], references: [id])
     candidateId Int?       @unique
