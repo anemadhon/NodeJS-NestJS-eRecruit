@@ -18,6 +18,7 @@ async function bootstrap() {
 	const config = new DocumentBuilder()
 		.setTitle('eRecruit API')
 		.setDescription('The eRecruit API documentation')
+		.addBearerAuth()
 		.build()
 
 	const document = SwaggerModule.createDocument(app, config)
