@@ -65,3 +65,17 @@ export class CompleteSkillsDto {
 	@Type(() => CompleteSkillDto)
 	skills: CompleteSkillDto[]
 }
+
+export class CompleteSocialDto {
+	@IsString()
+	whatsapp: string
+
+	@IsString()
+	instagram: string
+
+	@IsString()
+	linkedin: string
+
+	@IsString()
+	github: string
+}

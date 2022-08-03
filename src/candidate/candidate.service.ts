@@ -3,7 +3,11 @@ import { ApplicantEntity } from 'src/applicant/applicant.entity'
 import { PrismaService } from 'src/prisma/prisma.service'
 import { tryCatchErrorHandling } from 'src/util/util-http-error.filter'
 import { UtilService } from 'src/util/util.service'
-import { CandidateDto, CompleteSkillsDto } from './candidate.dto'
+import {
+	CandidateDto,
+	CompleteSkillsDto,
+	CompleteSocialDto,
+} from './candidate.dto'
 import { CandidateEntity } from './candidate.entity'
 
 @Injectable()
@@ -70,6 +74,33 @@ export class CandidateService {
 		return {
 			message: 'Your skills added successfully',
 			result: { skills },
+		}
+	}
+
+	async completeSocial(
+		authenticatedUser: CandidateEntity,
+		username: string,
+		{ whatsapp, linkedin, instagram, github }: CompleteSocialDto
+	) {
+		if (authenticatedUser?.username !== username) {
+			throw new ForbiddenException('You are not allowed to this action')
+		}
+
+		const social = await this.prisma.candidateSocial
+			.create({
+				data: {
+					whatsapp,
+					linkedin,
+					github,
+					instagram,
+					candidateId: authenticatedUser.id,
+				},
+			})
+			.catch(error => tryCatchErrorHandling(error))
+
+		return {
+			message: 'Your social media added successfully',
+			result: { social },
 		}
 	}
 }
