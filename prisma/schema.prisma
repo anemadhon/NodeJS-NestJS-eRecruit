@@ -125,8 +125,8 @@ model CandidateExperience {
 
     company     String
     title       String
-    joinedAt    DateTime @db.Date
-    endedAt     DateTime @db.Date
+    joinedAt    String
+    endedAt     String
     description String
 
     candidate   Candidate @relation(fields: [candidateId], references: [id])
