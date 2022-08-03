@@ -5,6 +5,7 @@ import { tryCatchErrorHandling } from 'src/util/util-http-error.filter'
 import { UtilService } from 'src/util/util.service'
 import {
 	CandidateDto,
+	CompleteExperiencesDto,
 	CompleteSkillsDto,
 	CompleteSocialDto,
 } from './candidate.dto'
@@ -101,6 +102,30 @@ export class CandidateService {
 		return {
 			message: 'Your social media added successfully',
 			result: { social },
+		}
+	}
+
+	async completeExperience(
+		authenticatedUser: CandidateEntity,
+		username: string,
+		body: CompleteExperiencesDto
+	) {
+		if (authenticatedUser?.username !== username) {
+			throw new ForbiddenException('You are not allowed to this action')
+		}
+
+		const data = body.experiences.map(experience => ({
+			...experience,
+			candidateId: authenticatedUser.id,
+		}))
+
+		const experiences = await this.prisma.candidateExperience
+			.createMany({ data })
+			.catch(error => tryCatchErrorHandling(error))
+
+		return {
+			message: 'Your work experiences added successfully',
+			result: { workExperiences: experiences },
 		}
 	}
 }

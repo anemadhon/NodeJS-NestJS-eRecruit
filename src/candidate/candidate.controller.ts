@@ -12,6 +12,7 @@ import { ApiBearerAuth, ApiTags } from '@nestjs/swagger'
 import { AuthenticatedUser } from 'src/auth/auth-user.decorator'
 import {
 	CandidateDto,
+	CompleteExperiencesDto,
 	CompleteSkillsDto,
 	CompleteSocialDto,
 } from './candidate.dto'
@@ -53,6 +54,21 @@ export class CandidateController {
 		@Body() body: CompleteSocialDto
 	) {
 		return this.candidateService.completeSocial(
+			authenticatedUser,
+			username,
+			body
+		)
+	}
+
+	@ApiBearerAuth()
+	@UseGuards(AuthGuard('jwt'))
+	@Post('candidates/:username/completes/experiences')
+	completeExperience(
+		@AuthenticatedUser() authenticatedUser: CandidateEntity,
+		@Param('username') username: string,
+		@Body() body: CompleteExperiencesDto
+	) {
+		return this.candidateService.completeExperience(
 			authenticatedUser,
 			username,
 			body

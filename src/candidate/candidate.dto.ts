@@ -79,3 +79,27 @@ export class CompleteSocialDto {
 	@IsString()
 	github: string
 }
+
+export class CompleteExperienceDto {
+	@IsString()
+	company: string
+
+	@IsString()
+	title: string
+
+	@IsString()
+	joinedAt: string
+
+	@IsString()
+	endedAt: string
+
+	@IsString()
+	description: string
+}
+
+export class CompleteExperiencesDto {
+	@IsArray()
+	@ValidateNested({ each: true })
+	@Type(() => CompleteExperienceDto)
+	experiences: CompleteExperienceDto[]
+}
