@@ -1,5 +1,15 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
-import { IsEmail, IsInt, IsNotEmpty, IsString } from 'class-validator'
+import { Type } from 'class-transformer'
+import {
+	IsArray,
+	IsEmail,
+	IsInt,
+	IsNotEmpty,
+	IsString,
+	Max,
+	Min,
+	ValidateNested,
+} from 'class-validator'
 
 export class CandidateDto {
 	@ApiProperty()
@@ -37,4 +47,21 @@ export class CandidateDto {
 	@IsInt()
 	@IsNotEmpty()
 	jobId: number
+}
+
+export class CompleteSkillDto {
+	@IsString()
+	skill: string
+
+	@IsInt()
+	@Min(1)
+	@Max(5)
+	level: number
+}
+
+export class CompleteSkillsDto {
+	@IsArray()
+	@ValidateNested({ each: true })
+	@Type(() => CompleteSkillDto)
+	skills: CompleteSkillDto[]
 }

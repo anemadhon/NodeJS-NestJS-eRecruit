@@ -1,9 +1,10 @@
-import { Injectable } from '@nestjs/common'
+import { ForbiddenException, Injectable } from '@nestjs/common'
 import { ApplicantEntity } from 'src/applicant/applicant.entity'
 import { PrismaService } from 'src/prisma/prisma.service'
 import { tryCatchErrorHandling } from 'src/util/util-http-error.filter'
 import { UtilService } from 'src/util/util.service'
-import { CandidateDto } from './candidate.dto'
+import { CandidateDto, CompleteSkillsDto } from './candidate.dto'
+import { CandidateEntity } from './candidate.entity'
 
 @Injectable()
 export class CandidateService {
@@ -30,6 +31,7 @@ export class CandidateService {
 				},
 			})
 			.catch(error => tryCatchErrorHandling(error))
+
 		const applicant = await this.prisma.applicant
 			.create({
 				data: {
@@ -44,6 +46,30 @@ export class CandidateService {
 		return {
 			message: 'Your application is sent',
 			result: new ApplicantEntity(applicant),
+		}
+	}
+
+	async completeSkill(
+		authenticatedUser: CandidateEntity,
+		username: string,
+		body: CompleteSkillsDto
+	) {
+		if (authenticatedUser?.username !== username) {
+			throw new ForbiddenException('You are not allowed to this action')
+		}
+
+		const data = body.skills.map(skill => ({
+			...skill,
+			candidateId: authenticatedUser.id,
+		}))
+
+		const skills = await this.prisma.candidateSkill
+			.createMany({ data })
+			.catch(error => tryCatchErrorHandling(error))
+
+		return {
+			message: 'Your skills added successfully',
+			result: { skills },
 		}
 	}
 }
