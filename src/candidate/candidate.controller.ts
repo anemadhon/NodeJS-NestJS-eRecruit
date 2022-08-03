@@ -2,6 +2,7 @@ import {
 	Body,
 	ClassSerializerInterceptor,
 	Controller,
+	Get,
 	Param,
 	Post,
 	UseGuards,
@@ -24,6 +25,16 @@ import { CandidateService } from './candidate.service'
 @UseInterceptors(ClassSerializerInterceptor)
 export class CandidateController {
 	constructor(private readonly candidateService: CandidateService) {}
+
+	@ApiBearerAuth()
+	@UseGuards(AuthGuard('jwt'))
+	@Get('me')
+	me(@AuthenticatedUser() authenticatedUser: CandidateEntity) {
+		return {
+			message: 'Get authenticated user successfully',
+			result: new CandidateEntity(authenticatedUser),
+		}
+	}
 
 	@Post('jobs/applies')
 	applies(@Body() body: CandidateDto) {
