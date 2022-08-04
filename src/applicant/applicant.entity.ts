@@ -12,17 +12,6 @@ export class ApplicantEntity {
 
 	@ApiPropertyOptional()
 	@Type(() => CandidateEntity)
-	@Transform(({ value }) => {
-		const fullName = `${value.firstName} ${value.lastName}`
-
-		return {
-			id: value.id,
-			username: value.username,
-			email: value.email,
-			name: fullName.trim(),
-			phone: value.phone,
-		}
-	})
 	candidate?: CandidateEntity
 
 	@ApiProperty()
