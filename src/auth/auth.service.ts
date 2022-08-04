@@ -2,7 +2,6 @@ import {
 	ForbiddenException,
 	Injectable,
 	UnauthorizedException,
-	UnprocessableEntityException,
 } from '@nestjs/common'
 import { ConfigService } from '@nestjs/config'
 import { JwtService } from '@nestjs/jwt'
@@ -220,9 +219,53 @@ export class AuthService {
 			})
 
 		if ('username' in payload) {
-			throw new UnprocessableEntityException(
-				'UnprocessableEntityException - The servive only available on expired JWT token'
-			)
+			const user = await this.utils
+				.checkUserByUsername(payload.username)
+				.catch(error => tryCatchErrorHandling(error))
+
+			if (user.refreshToken !== refreshToken) {
+				if ('username' in user) {
+					await this.utils
+						.updateSingleCandidate({ refreshToken: null }, { id: user.id })
+						.catch(error => tryCatchErrorHandling(error))
+				}
+
+				if ('nik' in user) {
+					await this.utils
+						.updateRefreshTokenEmployee({ refreshToken: null }, { id: user.id })
+						.catch(error => tryCatchErrorHandling(error))
+				}
+
+				throw new UnauthorizedException(
+					'UnauthorizedException - Please login to continue'
+				)
+			}
+
+			const accessToken = await this.generateJWTToken({
+				sub: user.id,
+				username: 'username' in user ? user.username : user.nik,
+				email: user.email,
+				options: {
+					expiresIn: this.config.get('JWT_EXPIRE'),
+					secret: this.config.get('JWT_SECRET'),
+				},
+			})
+
+			return {
+				message: `You are validated, welcome ${
+					'nik' in user ? user.name : user.username
+				}`,
+				result:
+					'nik' in user
+						? new EmployeeEntity({
+								...user,
+								token: { type: 'Bearer', accessToken },
+						  })
+						: new CandidateEntity({
+								...user,
+								token: { type: 'Bearer', accessToken },
+						  }),
+			}
 		}
 
 		if ('message' in payload) return payload
