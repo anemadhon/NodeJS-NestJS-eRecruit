@@ -24,7 +24,13 @@ export class EmployeeService {
 				include: {
 					processState: true,
 					job: true,
-					candidate: true,
+					candidate: {
+						include: {
+							candidateSkills: true,
+							candidateExperiences: true,
+							candidateSocial: true,
+						},
+					},
 				},
 			})
 			.catch(error => tryCatchErrorHandling(error))
@@ -59,7 +65,7 @@ export class EmployeeService {
 
 		if (applicant.processState.id === stateId) {
 			throw new UnprocessableEntityException(
-				'UnprocessableEntityException - Yoe have done this before'
+				'UnprocessableEntityException - You have done this before'
 			)
 		}
 
@@ -70,7 +76,13 @@ export class EmployeeService {
 				include: {
 					processState: true,
 					job: true,
-					candidate: true,
+					candidate: {
+						include: {
+							candidateSkills: true,
+							candidateExperiences: true,
+							candidateSocial: true,
+						},
+					},
 				},
 			})
 			.catch(error => tryCatchErrorHandling(error))

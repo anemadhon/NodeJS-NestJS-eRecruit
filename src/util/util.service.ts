@@ -38,6 +38,13 @@ export class UtilService {
 			include: {
 				processState: true,
 				job: true,
+				candidate: {
+					include: {
+						candidateSkills: true,
+						candidateExperiences: true,
+						candidateSocial: true,
+					},
+				},
 			},
 		})
 	}
@@ -52,6 +59,9 @@ export class UtilService {
 						job: true,
 					},
 				},
+				candidateSkills: true,
+				candidateExperiences: true,
+				candidateSocial: true,
 			},
 		})
 	}
