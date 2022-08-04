@@ -1,4 +1,4 @@
-import { CandidateEntity } from 'src/candidate/candidate.entity'
+import { CandidateEntity } from 'src/candidate/entity/candidate.entity'
 import { EmployeeEntity } from 'src/employee/employee.entity'
 
 export const authCandidateStub = (): Partial<CandidateEntity> => {

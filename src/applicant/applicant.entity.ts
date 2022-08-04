@@ -1,6 +1,6 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
 import { Exclude, Transform, Type } from 'class-transformer'
-import { CandidateEntity } from 'src/candidate/candidate.entity'
+import { CandidateEntity } from 'src/candidate/entity/candidate.entity'
 import { JobEntity } from 'src/job/job.entity'
 import { ProcessStateEntity } from 'src/process_state/process-state.entity'
 

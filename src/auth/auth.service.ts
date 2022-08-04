@@ -16,7 +16,7 @@ import {
 import * as argon from 'argon2'
 import { UtilService } from 'src/util/util.service'
 import { JwtPayload } from './jwt/jwt.interface'
-import { CandidateEntity } from 'src/candidate/candidate.entity'
+import { CandidateEntity } from 'src/candidate/entity/candidate.entity'
 import {
 	ExceptionInterface,
 	tryCatchErrorHandling,
