@@ -12,7 +12,7 @@ import { AuthGuard } from '@nestjs/passport'
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger'
 import { AuthenticatedUser } from 'src/auth/auth-user.decorator'
 import {
-	CandidateDto,
+	ApplyJobDto,
 	CompleteExperiencesDto,
 	CompleteSkillsDto,
 	CompleteSocialDto,
@@ -37,7 +37,7 @@ export class CandidateController {
 	}
 
 	@Post('jobs/applies')
-	applies(@Body() body: CandidateDto) {
+	applies(@Body() body: ApplyJobDto) {
 		return this.candidateService.applies(body)
 	}
 
