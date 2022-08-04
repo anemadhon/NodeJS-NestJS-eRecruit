@@ -1,5 +1,4 @@
 import { ForbiddenException, Injectable } from '@nestjs/common'
-import { ApplicantEntity } from 'src/applicant/applicant.entity'
 import { PrismaService } from 'src/prisma/prisma.service'
 import { tryCatchErrorHandling } from 'src/util/util-http-error.filter'
 import { UtilService } from 'src/util/util.service'
@@ -33,24 +32,28 @@ export class CandidateService {
 					lastName,
 					email,
 					phone,
+					applicants: {
+						create: {
+							submittedAt,
+							processStateId,
+							jobId,
+						},
+					},
 				},
-			})
-			.catch(error => tryCatchErrorHandling(error))
-
-		const applicant = await this.prisma.applicant
-			.create({
-				data: {
-					submittedAt,
-					processStateId,
-					jobId,
-					candidateId: candidate.id,
+				include: {
+					applicants: {
+						include: {
+							job: true,
+							processState: true,
+						},
+					},
 				},
 			})
 			.catch(error => tryCatchErrorHandling(error))
 
 		return {
 			message: 'Your application is sent',
-			result: new ApplicantEntity(applicant),
+			result: new CandidateEntity(candidate),
 		}
 	}
 
@@ -81,22 +84,16 @@ export class CandidateService {
 	async completeSocial(
 		authenticatedUser: CandidateEntity,
 		username: string,
-		{ whatsapp, linkedin, instagram, github }: CompleteSocialDto
+		body: CompleteSocialDto
 	) {
 		if (authenticatedUser?.username !== username) {
 			throw new ForbiddenException('You are not allowed to this action')
 		}
 
+		const data = { ...body, candidateId: authenticatedUser.id }
+
 		const social = await this.prisma.candidateSocial
-			.create({
-				data: {
-					whatsapp,
-					linkedin,
-					github,
-					instagram,
-					candidateId: authenticatedUser.id,
-				},
-			})
+			.create({ data })
 			.catch(error => tryCatchErrorHandling(error))
 
 		return {
