@@ -26,6 +26,14 @@ import { EmployeeService } from './employee.service'
 export class EmployeeController {
 	constructor(private readonly employeeServie: EmployeeService) {}
 
+	@Get('me')
+	me(@AuthenticatedUser() authenticatedUser: EmployeeEntity) {
+		return {
+			message: 'Get authenticated user successfully',
+			result: new EmployeeEntity(authenticatedUser),
+		}
+	}
+
 	@Get('applicants')
 	getAllApplicant(@AuthenticatedUser() user: EmployeeEntity) {
 		return this.employeeServie.getAll(user)
