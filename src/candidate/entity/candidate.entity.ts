@@ -23,7 +23,7 @@ export class CandidateEntity {
 	token?: {
 		type: string
 		accessToken: string
-		refreshToken: string
+		refreshToken?: string
 	}
 
 	@ApiProperty()

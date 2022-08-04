@@ -10,7 +10,7 @@ export class EmployeeEntity {
 	token?: {
 		type: string
 		accessToken: string
-		refreshToken: string
+		refreshToken?: string
 	}
 
 	@Exclude()
