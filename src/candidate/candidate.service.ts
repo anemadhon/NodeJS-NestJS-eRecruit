@@ -8,7 +8,7 @@ import {
 	CompleteSkillsDto,
 	CompleteSocialDto,
 } from './candidate.dto'
-import { CandidateEntity } from './candidate.entity'
+import { CandidateEntity } from './entity/candidate.entity'
 
 @Injectable()
 export class CandidateService {

@@ -17,7 +17,7 @@ import {
 	CompleteSkillsDto,
 	CompleteSocialDto,
 } from './candidate.dto'
-import { CandidateEntity } from './candidate.entity'
+import { CandidateEntity } from './entity/candidate.entity'
 import { CandidateService } from './candidate.service'
 
 @ApiTags('candidate')

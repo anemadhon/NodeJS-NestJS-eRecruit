@@ -11,7 +11,7 @@ import {
 } from '@nestjs/common'
 import { AuthGuard } from '@nestjs/passport'
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger'
-import { CandidateEntity } from 'src/candidate/candidate.entity'
+import { CandidateEntity } from 'src/candidate/entity/candidate.entity'
 import { EmployeeEntity } from 'src/employee/employee.entity'
 import { AuthenticatedUser } from './auth-user.decorator'
 import {
