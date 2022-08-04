@@ -3,7 +3,7 @@ import { PrismaService } from 'src/prisma/prisma.service'
 import { tryCatchErrorHandling } from 'src/util/util-http-error.filter'
 import { UtilService } from 'src/util/util.service'
 import {
-	CandidateDto,
+	ApplyJobDto,
 	CompleteExperiencesDto,
 	CompleteSkillsDto,
 	CompleteSocialDto,
@@ -22,7 +22,7 @@ export class CandidateService {
 		submittedAt,
 		processStateId,
 		jobId,
-	}: CandidateDto) {
+	}: ApplyJobDto) {
 		const candidate = await this.prisma.candidate
 			.upsert({
 				where: { email },

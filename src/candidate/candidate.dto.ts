@@ -11,7 +11,7 @@ import {
 	ValidateNested,
 } from 'class-validator'
 
-export class CandidateDto {
+export class ApplyJobDto {
 	@ApiProperty()
 	@IsString()
 	@IsNotEmpty()
