@@ -212,7 +212,7 @@ export class AuthService {
 	async refresh({ refreshToken }: RefreshTokenDto) {
 		const payload = await this.jwt
 			.verifyAsync(refreshToken, {
-				secret: this.config.get('JWT_REFRESH_SECRET'),
+				secret: this.config.get<string>('JWT_REFRESH_SECRET'),
 			})
 			.catch(error => {
 				return this.handleRefreshTokenExipred(error, refreshToken)
@@ -246,8 +246,8 @@ export class AuthService {
 				username: 'username' in user ? user.username : user.nik,
 				email: user.email,
 				options: {
-					expiresIn: this.config.get('JWT_EXPIRE'),
-					secret: this.config.get('JWT_SECRET'),
+					expiresIn: this.config.get<string>('JWT_EXPIRE'),
+					secret: this.config.get<string>('JWT_SECRET'),
 				},
 			})
 
@@ -338,8 +338,8 @@ export class AuthService {
 			username,
 			email,
 			options: {
-				expiresIn: this.config.get('JWT_EXPIRE'),
-				secret: this.config.get('JWT_SECRET'),
+				expiresIn: this.config.get<string>('JWT_EXPIRE'),
+				secret: this.config.get<string>('JWT_SECRET'),
 			},
 		})
 
@@ -348,8 +348,8 @@ export class AuthService {
 			username,
 			email,
 			options: {
-				expiresIn: this.config.get('JWT_REFRESH_EXPIRE'),
-				secret: this.config.get('JWT_REFRESH_SECRET'),
+				expiresIn: this.config.get<string>('JWT_REFRESH_EXPIRE'),
+				secret: this.config.get<string>('JWT_REFRESH_SECRET'),
 			},
 		})
 

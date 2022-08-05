@@ -10,16 +10,16 @@ import { UtilService } from './util.service'
 			imports: [ConfigModule],
 			useFactory: async (config: ConfigService) => ({
 				transport: {
-					host: config.get('MAIL_HOST'),
-					secure: !(config.get('MAIL_SECURE') === 'false'),
-					port: parseInt(config.get('MAIL_PORT')),
+					host: config.get<string>('MAIL_HOST'),
+					secure: config.get<boolean>('MAIL_SECURE'),
+					port: config.get<number>('MAIL_PORT'),
 					auth: {
-						user: config.get('MAIL_USER'),
-						pass: config.get('MAIL_PASSWORD'),
+						user: config.get<string>('MAIL_USER'),
+						pass: config.get<string>('MAIL_PASSWORD'),
 					},
 				},
 				defaults: {
-					from: `"No Reply" <${config.get('MAIL_FROM')}>`,
+					from: `"No Reply" <${config.get<string>('MAIL_FROM')}>`,
 				},
 			}),
 			inject: [ConfigService],
