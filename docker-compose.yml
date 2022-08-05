@@ -1,8 +1,8 @@
-version: '4.8'
 services:
   db-dev:
+    container_name: db-dev-postgres
     image: postgres:13
-    ports: 
+    ports:
       - 5434:5432
     environment:
       POSTGRES_USER: postgres
@@ -10,5 +10,13 @@ services:
       POSTGRES_DB: nest_restapi
     networks:
       - freecodecamp
+  redis-dev:
+    container_name: redis-dev
+    image: redis:latest
+    ports:
+      - 6379:6379
+    networks:
+      - freecodecamp
 networks:
   freecodecamp:
+    name: freecodecamp
