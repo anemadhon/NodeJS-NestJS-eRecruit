@@ -2,6 +2,7 @@ import {
 	ForbiddenException,
 	Injectable,
 	UnauthorizedException,
+	UnprocessableEntityException,
 } from '@nestjs/common'
 import { ConfigService } from '@nestjs/config'
 import { JwtService } from '@nestjs/jwt'
@@ -155,10 +156,9 @@ export class AuthService {
 		if (!user) throw new ForbiddenException('Credentials incorrect')
 
 		if (user.refreshToken) {
-			return {
-				message: 'You are logged in, please logout to continue',
-				result: new CandidateEntity(user),
-			}
+			throw new UnprocessableEntityException(
+				'UnprocessableEntityException - You are logged in, please logout to continue'
+			)
 		}
 
 		const isPasswordMatches = await argon
