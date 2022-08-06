@@ -16,9 +16,12 @@ export class JwtAccessTokenStrategy extends PassportStrategy(Strategy, 'jwt') {
 		})
 	}
 
-	async validate({ headers }: { headers: unknown }, { username }: JwtPayload) {
+	async validate(
+		{ headers }: { headers: unknown },
+		{ username, email }: JwtPayload
+	) {
 		const token = headers['authorization'].split(' ')[1]
-		const tokenFromRedis = await this.utils.getDataToRedis('token')
+		const tokenFromRedis = await this.utils.getDataToRedis(email)
 		const authenticatedUser = await this.utils
 			.checkUserByUsername(username)
 			.catch(error => tryCatchErrorHandling(error))

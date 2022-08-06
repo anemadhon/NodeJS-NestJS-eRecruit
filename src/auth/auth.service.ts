@@ -223,7 +223,7 @@ export class AuthService {
 				},
 			})
 
-			await this.utils.setDataToRedis('token', accessToken)
+			this.utils.setDataToRedis(user.email, accessToken)
 
 			return {
 				message: `You are validated, welcome ${
@@ -325,7 +325,7 @@ export class AuthService {
 			},
 		})
 
-		await this.utils.setDataToRedis('token', accessToken)
+		this.utils.setDataToRedis(email, accessToken)
 
 		return {
 			type: 'Bearer',
