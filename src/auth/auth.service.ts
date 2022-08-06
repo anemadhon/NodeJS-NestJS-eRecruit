@@ -198,9 +198,7 @@ export class AuthService {
 			.verifyAsync(refreshToken, {
 				secret: this.config.get<string>('JWT_REFRESH_SECRET'),
 			})
-			.catch(error => {
-				return this.handleRefreshTokenExipred(error, refreshToken)
-			})
+			.catch(error => this.handleRefreshTokenExipred(error, refreshToken))
 
 		if ('username' in payload) {
 			const user = await this.utils
