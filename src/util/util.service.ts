@@ -1,13 +1,18 @@
 import { MailerService } from '@nestjs-modules/mailer'
-import { Injectable } from '@nestjs/common'
+import { CACHE_MANAGER, Inject, Injectable } from '@nestjs/common'
 import { PrismaService } from 'src/prisma/prisma.service'
 import { v4 as uuid } from 'uuid'
+import { Cache } from 'cache-manager'
+import { tryCatchErrorHandling } from './util-http-error.filter'
+import { CandidateEntity } from 'src/candidate/entity/candidate.entity'
+import { EmployeeEntity } from 'src/employee/employee.entity'
 
 @Injectable()
 export class UtilService {
 	constructor(
 		private readonly prisma: PrismaService,
-		private readonly mailerService: MailerService
+		private readonly mailerService: MailerService,
+		@Inject(CACHE_MANAGER) private readonly cacheManager: Cache
 	) {}
 
 	async checkUserByUsername(username: string) {
@@ -100,5 +105,37 @@ export class UtilService {
 			subject,
 			text: `please click this link ${url}`,
 		})
+	}
+
+	async clearAllToken(user: CandidateEntity | EmployeeEntity): Promise<void> {
+		if (user && 'nik' in user) {
+			await this.updateRefreshTokenEmployee(
+				{ refreshToken: null },
+				{ id: user.id }
+			).catch(error => tryCatchErrorHandling(error))
+		}
+
+		if (user && 'username' in user) {
+			await this.updateSingleCandidate(
+				{ refreshToken: null },
+				{ id: user.id }
+			).catch(error => tryCatchErrorHandling(error))
+		}
+
+		await this.resetRedis()
+	}
+
+	async setDataToRedis(key: string, data: string): Promise<void> {
+		await this.cacheManager
+			.set(key, data)
+			.catch(error => tryCatchErrorHandling(error))
+	}
+
+	async getDataToRedis(key: string): Promise<string> {
+		return await this.cacheManager.get(key)
+	}
+
+	async resetRedis(): Promise<void> {
+		await this.cacheManager.reset().catch(error => tryCatchErrorHandling(error))
 	}
 }

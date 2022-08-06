@@ -184,24 +184,8 @@ export class AuthService {
 		}
 	}
 
-	async logout(user: CandidateEntity | EmployeeEntity) {
-		if (!user.refreshToken) {
-			throw new UnauthorizedException(
-				'UnauthorizedException - Please login to continue'
-			)
-		}
-
-		if ('nik' in user) {
-			await this.utils
-				.updateRefreshTokenEmployee({ refreshToken: null }, { id: user.id })
-				.catch(error => tryCatchErrorHandling(error))
-		}
-
-		if ('username' in user) {
-			await this.utils
-				.updateSingleCandidate({ refreshToken: null }, { id: user.id })
-				.catch(error => tryCatchErrorHandling(error))
-		}
+	logout(user: CandidateEntity | EmployeeEntity) {
+		this.utils.clearAllToken(user)
 
 		return {
 			message: 'Logout Successfully',
@@ -224,17 +208,7 @@ export class AuthService {
 				.catch(error => tryCatchErrorHandling(error))
 
 			if (user.refreshToken !== refreshToken) {
-				if ('username' in user) {
-					await this.utils
-						.updateSingleCandidate({ refreshToken: null }, { id: user.id })
-						.catch(error => tryCatchErrorHandling(error))
-				}
-
-				if ('nik' in user) {
-					await this.utils
-						.updateRefreshTokenEmployee({ refreshToken: null }, { id: user.id })
-						.catch(error => tryCatchErrorHandling(error))
-				}
+				this.utils.clearAllToken(user)
 
 				throw new UnauthorizedException(
 					'UnauthorizedException - Please login to continue'
@@ -250,6 +224,8 @@ export class AuthService {
 					secret: this.config.get<string>('JWT_SECRET'),
 				},
 			})
+
+			await this.utils.setDataToRedis('token', accessToken)
 
 			return {
 				message: `You are validated, welcome ${
@@ -267,8 +243,6 @@ export class AuthService {
 						  }),
 			}
 		}
-
-		if ('message' in payload) return payload
 	}
 
 	private async updateAndSendEmail<TDataToUpdate>(
@@ -353,6 +327,8 @@ export class AuthService {
 			},
 		})
 
+		await this.utils.setDataToRedis('token', accessToken)
+
 		return {
 			type: 'Bearer',
 			accessToken,
@@ -384,40 +360,11 @@ export class AuthService {
 				.checkUserByUsername(username)
 				.catch(error => tryCatchErrorHandling(error))
 
-			if (user.refreshToken !== refreshToken) {
-				if ('username' in user) {
-					await this.utils
-						.updateSingleCandidate({ refreshToken: null }, { id: user.id })
-						.catch(error => tryCatchErrorHandling(error))
-				}
+			this.utils.clearAllToken(user)
 
-				if ('nik' in user) {
-					await this.utils
-						.updateRefreshTokenEmployee({ refreshToken: null }, { id: user.id })
-						.catch(error => tryCatchErrorHandling(error))
-				}
-
-				throw new UnauthorizedException(
-					'UnauthorizedException - Please login to continue'
-				)
-			}
-
-			const refreshTokenUpdated = await this.generateAndUpdateToken(user)
-
-			return {
-				message: `You are validated, welcome ${
-					'nik' in refreshTokenUpdated?.data
-						? refreshTokenUpdated?.data?.name
-						: refreshTokenUpdated?.data?.username
-				}`,
-				result:
-					'nik' in refreshTokenUpdated?.data
-						? new EmployeeEntity({ ...user, token: refreshTokenUpdated?.token })
-						: new CandidateEntity({
-								...user,
-								token: refreshTokenUpdated?.token,
-						  }),
-			}
+			throw new UnauthorizedException(
+				'UnauthorizedException - Please login to continue'
+			)
 		}
 
 		tryCatchErrorHandling(error)

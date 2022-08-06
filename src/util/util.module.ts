@@ -1,7 +1,8 @@
 import { MailerModule } from '@nestjs-modules/mailer'
-import { Global, Module } from '@nestjs/common'
+import { CacheModule, Global, Module } from '@nestjs/common'
 import { ConfigModule, ConfigService } from '@nestjs/config'
 import { UtilService } from './util.service'
+import * as redisStore from 'cache-manager-redis-store'
 
 @Global()
 @Module({
@@ -21,6 +22,16 @@ import { UtilService } from './util.service'
 				defaults: {
 					from: `"No Reply" <${config.get<string>('MAIL_FROM')}>`,
 				},
+			}),
+			inject: [ConfigService],
+		}),
+		CacheModule.registerAsync({
+			imports: [ConfigModule],
+			useFactory: async (config: ConfigService) => ({
+				store: redisStore,
+				host: config.get<string>('REDIS_HOST'),
+				port: config.get<number>('REDIS_PORT'),
+				ttl: config.get<number>('REDIS_TTL'),
 			}),
 			inject: [ConfigService],
 		}),

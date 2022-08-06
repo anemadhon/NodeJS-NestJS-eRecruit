@@ -35,20 +35,19 @@ export class EmployeeController {
 	}
 
 	@Get('applicants')
-	getAllApplicant(@AuthenticatedUser() user: EmployeeEntity) {
-		return this.employeeServie.getAll(user)
+	getAllApplicant() {
+		return this.employeeServie.getAll()
 	}
 
 	@HttpCode(200)
 	@Patch('applicants/:id/states/:stateId')
 	updateApplicantState(
 		@Param('id', ParseIntPipe) idApplicant: number,
-		@Param('stateId', ParseIntPipe) idState: number,
-		@AuthenticatedUser() user: EmployeeEntity
+		@Param('stateId', ParseIntPipe) idState: number
 	) {
-		return this.employeeServie.updateState(
-			{ id: idApplicant, stateId: idState },
-			user
-		)
+		return this.employeeServie.updateState({
+			id: idApplicant,
+			stateId: idState,
+		})
 	}
 }

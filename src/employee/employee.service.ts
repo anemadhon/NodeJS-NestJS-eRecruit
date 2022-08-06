@@ -1,24 +1,19 @@
 import {
-	ForbiddenException,
 	Injectable,
 	NotFoundException,
-	UnauthorizedException,
 	UnprocessableEntityException,
 } from '@nestjs/common'
 import { tryCatchErrorHandling } from 'src/util/util-http-error.filter'
 import { PrismaService } from 'src/prisma/prisma.service'
 import { ApplicantEntity } from 'src/applicant/applicant.entity'
 import { ApplicantsEntity } from 'src/applicant/applicants.entity'
-import { EmployeeEntity } from './employee.entity'
 import { UtilService } from 'src/util/util.service'
 
 @Injectable()
 export class EmployeeService {
 	constructor(private prisma: PrismaService, private utils: UtilService) {}
 
-	async getAll(user: EmployeeEntity) {
-		await this.validateToken(user)
-
+	async getAll() {
 		const applicants = await this.prisma.applicant
 			.findMany({
 				include: {
@@ -43,12 +38,7 @@ export class EmployeeService {
 		}
 	}
 
-	async updateState(
-		{ id, stateId }: { id: number; stateId: number },
-		user: EmployeeEntity
-	) {
-		await this.validateToken(user)
-
+	async updateState({ id, stateId }: { id: number; stateId: number }) {
 		const state = await this.utils
 			.getSingleProcessState(stateId)
 			.catch(error => tryCatchErrorHandling(error))
@@ -92,26 +82,6 @@ export class EmployeeService {
 				? 'Update process state successfully'
 				: 'Update process state failed',
 			result: new ApplicantEntity(applicantStateUpdated),
-		}
-	}
-
-	private async validateToken(user: EmployeeEntity) {
-		if (!user.refreshToken) {
-			throw new UnauthorizedException(
-				'UnauthorizedException - Please login to continue'
-			)
-		}
-
-		const userFromPayload = await this.utils
-			.getSingleEmployee(user.email)
-			.catch(error => tryCatchErrorHandling(error))
-
-		if (user.refreshToken !== userFromPayload.refreshToken) {
-			await this.utils
-				.updateRefreshTokenEmployee({ refreshToken: null }, { id: user.id })
-				.catch(error => tryCatchErrorHandling(error))
-
-			throw new ForbiddenException('Token not match, please re-login')
 		}
 	}
 }

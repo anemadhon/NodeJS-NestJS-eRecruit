@@ -12,15 +12,38 @@ export class JwtAccessTokenStrategy extends PassportStrategy(Strategy, 'jwt') {
 		super({
 			jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
 			secretOrKey: config.get<string>('JWT_SECRET'),
+			passReqToCallback: true,
 		})
 	}
 
-	async validate({ username }: JwtPayload) {
+	async validate({ headers }: { headers: unknown }, { username }: JwtPayload) {
+		const token = headers['authorization'].split(' ')[1]
+		const tokenFromRedis = await this.utils.getDataToRedis('token')
 		const authenticatedUser = await this.utils
 			.checkUserByUsername(username)
 			.catch(error => tryCatchErrorHandling(error))
 
-		if (!authenticatedUser.refreshToken) {
+		if (token !== tokenFromRedis) {
+			if (authenticatedUser && 'nik' in authenticatedUser) {
+				await this.utils
+					.updateRefreshTokenEmployee(
+						{ refreshToken: null },
+						{ id: authenticatedUser.id }
+					)
+					.catch(error => tryCatchErrorHandling(error))
+			}
+
+			if (authenticatedUser && 'username' in authenticatedUser) {
+				await this.utils
+					.updateSingleCandidate(
+						{ refreshToken: null },
+						{ id: authenticatedUser.id }
+					)
+					.catch(error => tryCatchErrorHandling(error))
+			}
+
+			await this.utils.resetRedis()
+
 			throw new UnauthorizedException(
 				'UnauthorizedException - Please login to continue'
 			)
