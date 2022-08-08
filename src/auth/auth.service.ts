@@ -201,6 +201,14 @@ export class AuthService {
 			.catch(error => this.handleRefreshTokenExipred(error, refreshToken))
 
 		if ('username' in payload) {
+			const tokenFromRedis = await this.utils.getDataToRedis(payload.email)
+
+			if (tokenFromRedis) {
+				throw new UnprocessableEntityException(
+					'UnprocessableEntityException - This action only for expired JWT token'
+				)
+			}
+
 			const user = await this.utils
 				.checkUserByUsername(payload.username)
 				.catch(error => tryCatchErrorHandling(error))
