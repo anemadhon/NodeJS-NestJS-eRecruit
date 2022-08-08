@@ -57,40 +57,45 @@ export class CandidateService {
 		}
 	}
 
-	async completeSkill(
-		authenticatedUser: CandidateEntity,
-		username: string,
-		body: CompleteSkillsDto
-	) {
-		if (authenticatedUser?.username !== username) {
+	async completeSkill({
+		id: candidateId,
+		username,
+		usernameFromParam,
+		skills,
+	}: CandidateEntity & CompleteSkillsDto & { usernameFromParam: string }) {
+		if (username !== usernameFromParam) {
 			throw new ForbiddenException('You are not allowed to this action')
 		}
 
-		const data = body.skills.map(skill => ({
+		const data = skills.map(skill => ({
 			...skill,
-			candidateId: authenticatedUser.id,
+			candidateId,
 		}))
 
-		const skills = await this.prisma.candidateSkill
+		const result = await this.prisma.candidateSkill
 			.createMany({ data })
 			.catch(error => tryCatchErrorHandling(error))
 
 		return {
 			message: 'Your skills added successfully',
-			result: { skills },
+			result: { skills: result },
 		}
 	}
 
-	async completeSocial(
-		authenticatedUser: CandidateEntity,
-		username: string,
-		body: CompleteSocialDto
-	) {
-		if (authenticatedUser?.username !== username) {
+	async completeSocial({
+		id: candidateId,
+		username,
+		usernameFromParam,
+		whatsapp,
+		instagram,
+		linkedin,
+		github,
+	}: CandidateEntity & CompleteSocialDto & { usernameFromParam: string }) {
+		if (username !== usernameFromParam) {
 			throw new ForbiddenException('You are not allowed to this action')
 		}
 
-		const data = { ...body, candidateId: authenticatedUser.id }
+		const data = { whatsapp, instagram, linkedin, github, candidateId }
 
 		const social = await this.prisma.candidateSocial
 			.create({ data })
@@ -102,27 +107,28 @@ export class CandidateService {
 		}
 	}
 
-	async completeExperience(
-		authenticatedUser: CandidateEntity,
-		username: string,
-		body: CompleteExperiencesDto
-	) {
-		if (authenticatedUser?.username !== username) {
+	async completeExperience({
+		id: candidateId,
+		username,
+		usernameFromParam,
+		experiences,
+	}: CandidateEntity & CompleteExperiencesDto & { usernameFromParam: string }) {
+		if (username !== usernameFromParam) {
 			throw new ForbiddenException('You are not allowed to this action')
 		}
 
-		const data = body.experiences.map(experience => ({
+		const data = experiences.map(experience => ({
 			...experience,
-			candidateId: authenticatedUser.id,
+			candidateId,
 		}))
 
-		const experiences = await this.prisma.candidateExperience
+		const result = await this.prisma.candidateExperience
 			.createMany({ data })
 			.catch(error => tryCatchErrorHandling(error))
 
 		return {
 			message: 'Your work experiences added successfully',
-			result: { workExperiences: experiences },
+			result: { workExperiences: result },
 		}
 	}
 }

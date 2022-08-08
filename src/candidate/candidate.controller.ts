@@ -49,11 +49,11 @@ export class CandidateController {
 		@Param('username') username: string,
 		@Body() body: CompleteSkillsDto
 	) {
-		return this.candidateService.completeSkill(
-			authenticatedUser,
-			username,
-			body
-		)
+		return this.candidateService.completeSkill({
+			...authenticatedUser,
+			usernameFromParam: username,
+			skills: body.skills,
+		})
 	}
 
 	@ApiBearerAuth()
@@ -64,11 +64,11 @@ export class CandidateController {
 		@Param('username') username: string,
 		@Body() body: CompleteSocialDto
 	) {
-		return this.candidateService.completeSocial(
-			authenticatedUser,
-			username,
-			body
-		)
+		return this.candidateService.completeSocial({
+			...authenticatedUser,
+			...body,
+			usernameFromParam: username,
+		})
 	}
 
 	@ApiBearerAuth()
@@ -79,10 +79,10 @@ export class CandidateController {
 		@Param('username') username: string,
 		@Body() body: CompleteExperiencesDto
 	) {
-		return this.candidateService.completeExperience(
-			authenticatedUser,
-			username,
-			body
-		)
+		return this.candidateService.completeExperience({
+			...authenticatedUser,
+			usernameFromParam: username,
+			experiences: body.experiences,
+		})
 	}
 }
