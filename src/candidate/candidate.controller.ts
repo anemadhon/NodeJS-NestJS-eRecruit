@@ -9,7 +9,15 @@ import {
 	UseInterceptors,
 } from '@nestjs/common'
 import { AuthGuard } from '@nestjs/passport'
-import { ApiBearerAuth, ApiTags } from '@nestjs/swagger'
+import {
+	ApiBearerAuth,
+	ApiCreatedResponse,
+	ApiForbiddenResponse,
+	ApiInternalServerErrorResponse,
+	ApiOkResponse,
+	ApiTags,
+	ApiUnauthorizedResponse,
+} from '@nestjs/swagger'
 import { AuthenticatedUser } from 'src/auth/auth-user.decorator'
 import {
 	ApplyJobDto,
@@ -20,12 +28,16 @@ import {
 import { CandidateEntity } from './entity/candidate.entity'
 import { CandidateService } from './candidate.service'
 
+@ApiOkResponse({ description: `when eveything's OK` })
+@ApiUnauthorizedResponse({ description: `when access token expired` })
+@ApiInternalServerErrorResponse({ description: `when thing's goes wrong` })
 @ApiTags('candidate')
 @Controller({ path: 'candidates', version: '1' })
 @UseInterceptors(ClassSerializerInterceptor)
 export class CandidateController {
 	constructor(private readonly candidateService: CandidateService) {}
 
+	@ApiOkResponse({ description: `when eveything's OK` })
 	@ApiBearerAuth()
 	@UseGuards(AuthGuard('jwt'))
 	@Get('me')
@@ -36,11 +48,17 @@ export class CandidateController {
 		}
 	}
 
+	@ApiCreatedResponse({
+		description: `when candidate applying job successfully`,
+	})
 	@Post('jobs/applies')
 	applies(@Body() body: ApplyJobDto) {
 		return this.candidateService.applies(body)
 	}
 
+	@ApiForbiddenResponse({
+		description: `username not matched`,
+	})
 	@ApiBearerAuth()
 	@UseGuards(AuthGuard('jwt'))
 	@Post(':username/completes/skills')
@@ -56,6 +74,9 @@ export class CandidateController {
 		})
 	}
 
+	@ApiForbiddenResponse({
+		description: `username not matched`,
+	})
 	@ApiBearerAuth()
 	@UseGuards(AuthGuard('jwt'))
 	@Post(':username/completes/socials')
@@ -71,6 +92,9 @@ export class CandidateController {
 		})
 	}
 
+	@ApiForbiddenResponse({
+		description: `username not matched`,
+	})
 	@ApiBearerAuth()
 	@UseGuards(AuthGuard('jwt'))
 	@Post(':username/completes/experiences')

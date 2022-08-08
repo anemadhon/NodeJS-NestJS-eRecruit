@@ -10,13 +10,24 @@ import {
 	UseInterceptors,
 } from '@nestjs/common'
 import { AuthGuard } from '@nestjs/passport'
-import { ApiBearerAuth, ApiTags } from '@nestjs/swagger'
+import {
+	ApiBearerAuth,
+	ApiInternalServerErrorResponse,
+	ApiNotFoundResponse,
+	ApiOkResponse,
+	ApiTags,
+	ApiUnauthorizedResponse,
+	ApiUnprocessableEntityResponse,
+} from '@nestjs/swagger'
 import { AuthenticatedUser } from 'src/auth/auth-user.decorator'
 import { Roles } from 'src/auth/role/role.decorator'
 import { RolesGuard } from 'src/auth/role/role.guard'
 import { EmployeeEntity } from './employee.entity'
 import { EmployeeService } from './employee.service'
 
+@ApiOkResponse({ description: `when eveything's OK` })
+@ApiUnauthorizedResponse({ description: `when access token expired` })
+@ApiInternalServerErrorResponse({ description: `when thing's goes wrong` })
 @ApiTags('employee / admin')
 @ApiBearerAuth()
 @Roles('admin')
@@ -26,6 +37,7 @@ import { EmployeeService } from './employee.service'
 export class EmployeeController {
 	constructor(private readonly employeeServie: EmployeeService) {}
 
+	@ApiOkResponse({ description: `when eveything's OK` })
 	@Get('me')
 	me(@AuthenticatedUser() authenticatedUser: EmployeeEntity) {
 		return {
@@ -34,11 +46,16 @@ export class EmployeeController {
 		}
 	}
 
+	@ApiOkResponse({ description: `when eveything's OK` })
 	@Get('applicants')
 	getAllApplicant() {
 		return this.employeeServie.getAll()
 	}
 
+	@ApiNotFoundResponse({
+		description: `when candidate or process state not found`,
+	})
+	@ApiUnprocessableEntityResponse({ description: `when admin updated before` })
 	@HttpCode(200)
 	@Patch('applicants/:id/states/:stateId')
 	updateApplicantState(
