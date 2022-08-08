@@ -98,7 +98,7 @@ export class CandidateService {
 		const data = { whatsapp, instagram, linkedin, github, candidateId }
 
 		const social = await this.prisma.candidateSocial
-			.create({ data })
+			.upsert({ where: { candidateId }, update: data, create: data })
 			.catch(error => tryCatchErrorHandling(error))
 
 		return {
