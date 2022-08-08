@@ -31,9 +31,7 @@ export class UtilService {
 
 	async getSingleEmployee(username: string) {
 		return await this.prisma.employee.findFirst({
-			where: {
-				email: username,
-			},
+			where: { email: username },
 		})
 	}
 
@@ -71,17 +69,23 @@ export class UtilService {
 		})
 	}
 
-	async updateRefreshTokenEmployee(
-		data: { refreshToken: string },
+	async updateRefreshTokenEmployee({
+		data,
+		where,
+	}: {
+		data: { refreshToken: string | null }
 		where: { id: number }
-	) {
+	}) {
 		return await this.prisma.employee.update({ data, where })
 	}
 
-	async updateSingleCandidate<TDataToUpdate>(
-		data: TDataToUpdate,
+	async updateSingleCandidate<TDataToUpdate>({
+		data,
+		where,
+	}: {
+		data: TDataToUpdate
 		where: { id: number }
-	) {
+	}) {
 		return await this.prisma.candidate.update({ data, where })
 	}
 
@@ -89,7 +93,15 @@ export class UtilService {
 		return uuid()
 	}
 
-	async sendAnEmail({ email, code, flag }) {
+	async sendAnEmail({
+		email,
+		code,
+		flag,
+	}: {
+		email: string
+		code: string
+		flag: string
+	}) {
 		const url =
 			flag === 'verify'
 				? `http://localhost:3000/v1/authentication/email/${email}/verification/${code}`
@@ -109,25 +121,31 @@ export class UtilService {
 
 	async clearAllToken(user: CandidateEntity | EmployeeEntity): Promise<void> {
 		if (user && 'nik' in user) {
-			await this.updateRefreshTokenEmployee(
-				{ refreshToken: null },
-				{ id: user.id }
-			).catch(error => tryCatchErrorHandling(error))
+			await this.updateRefreshTokenEmployee({
+				data: { refreshToken: null },
+				where: { id: user.id },
+			}).catch(error => tryCatchErrorHandling(error))
 		}
 
 		if (user && 'username' in user) {
-			await this.updateSingleCandidate(
-				{ refreshToken: null },
-				{ id: user.id }
-			).catch(error => tryCatchErrorHandling(error))
+			await this.updateSingleCandidate({
+				data: { refreshToken: null },
+				where: { id: user.id },
+			}).catch(error => tryCatchErrorHandling(error))
 		}
 
 		await this.resetRedis()
 	}
 
-	async setDataToRedis(key: string, data: string): Promise<void> {
+	async setDataToRedis({
+		key,
+		value,
+	}: {
+		key: string
+		value: string
+	}): Promise<void> {
 		await this.cacheManager
-			.set(key, data)
+			.set(key, value)
 			.catch(error => tryCatchErrorHandling(error))
 	}
 

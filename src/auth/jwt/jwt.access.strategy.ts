@@ -29,19 +29,19 @@ export class JwtAccessTokenStrategy extends PassportStrategy(Strategy, 'jwt') {
 		if (token !== tokenFromRedis) {
 			if (authenticatedUser && 'nik' in authenticatedUser) {
 				await this.utils
-					.updateRefreshTokenEmployee(
-						{ refreshToken: null },
-						{ id: authenticatedUser.id }
-					)
+					.updateRefreshTokenEmployee({
+						data: { refreshToken: null },
+						where: { id: authenticatedUser.id },
+					})
 					.catch(error => tryCatchErrorHandling(error))
 			}
 
 			if (authenticatedUser && 'username' in authenticatedUser) {
 				await this.utils
-					.updateSingleCandidate(
-						{ refreshToken: null },
-						{ id: authenticatedUser.id }
-					)
+					.updateSingleCandidate({
+						data: { refreshToken: null },
+						where: { id: authenticatedUser.id },
+					})
 					.catch(error => tryCatchErrorHandling(error))
 			}
 

@@ -149,19 +149,19 @@ describe('UtilService Testing', () => {
 	describe('when call updateRefreshTokenEmployee', () => {
 		it('should return undefined when data to updated not found', () => {
 			expect(
-				utilService.updateRefreshTokenEmployee(
-					{ refreshToken: 'jwt-token' },
-					{ id: 11 }
-				)
+				utilService.updateRefreshTokenEmployee({
+					data: { refreshToken: 'jwt-token' },
+					where: { id: 11 },
+				})
 			).toBeUndefined()
 		})
 
 		it('should return single updated employee object', () => {
 			expect(
-				utilService.updateRefreshTokenEmployee(
-					{ refreshToken: 'jwt-token' },
-					{ id: utilEmployeeStub()[0].id }
-				)
+				utilService.updateRefreshTokenEmployee({
+					data: { refreshToken: 'jwt-token' },
+					where: { id: utilEmployeeStub()[0].id },
+				})
 			).toEqual(utilEmployeeStub()[0])
 		})
 	})
@@ -169,22 +169,22 @@ describe('UtilService Testing', () => {
 	describe('when call updateSingleCandidate', () => {
 		it('should return undefined when data to updated not found', () => {
 			expect(
-				utilService.updateSingleCandidate(
-					{ refreshToken: 'jwt-token' },
-					{ id: 1 }
-				)
+				utilService.updateSingleCandidate({
+					data: { refreshToken: 'jwt-token' },
+					where: { id: 1 },
+				})
 			).toBeUndefined()
 		})
 
 		it('should return single updated candidate object', () => {
 			expect(
-				utilService.updateSingleCandidate(
-					{
+				utilService.updateSingleCandidate({
+					data: {
 						passwordResetCode: 'reset-pwd',
 						emailIsVerified: true,
 					},
-					{ id: utilCandidateStub()[0].id }
-				)
+					where: { id: utilCandidateStub()[0].id },
+				})
 			).toEqual(utilCandidateStub()[0])
 		})
 	})

@@ -121,14 +121,14 @@ export class AuthService {
 		}
 
 		const accountValidated = await this.utils
-			.updateSingleCandidate(
-				{
+			.updateSingleCandidate({
+				data: {
 					username,
 					password: await argon.hash(password),
 					passwordResetCode: null,
 				},
-				{ id: user.id }
-			)
+				where: { id: user.id },
+			})
 			.catch(error => tryCatchErrorHandling(error))
 
 		const refreshTokenUpdated = await this.generateAndUpdateToken(
@@ -223,7 +223,7 @@ export class AuthService {
 				},
 			})
 
-			this.utils.setDataToRedis(user.email, accessToken)
+			this.utils.setDataToRedis({ key: user.email, value: accessToken })
 
 			return {
 				message: `You are validated, welcome ${
@@ -248,7 +248,7 @@ export class AuthService {
 		where: { id: number }
 	) {
 		const updatedData = await this.utils
-			.updateSingleCandidate(data, where)
+			.updateSingleCandidate({ data, where })
 			.catch(error => tryCatchErrorHandling(error))
 
 		this.sendEmail(updatedData)
@@ -281,16 +281,16 @@ export class AuthService {
 		const refreshTokenUpdated =
 			'nik' in user
 				? await this.utils
-						.updateRefreshTokenEmployee(
-							{ refreshToken: token.refreshToken },
-							{ id: user.id }
-						)
+						.updateRefreshTokenEmployee({
+							data: { refreshToken: token.refreshToken },
+							where: { id: user.id },
+						})
 						.catch(error => tryCatchErrorHandling(error))
 				: await this.utils
-						.updateSingleCandidate(
-							{ refreshToken: token.refreshToken },
-							{ id: user.id }
-						)
+						.updateSingleCandidate({
+							data: { refreshToken: token.refreshToken },
+							where: { id: user.id },
+						})
 						.catch(error => tryCatchErrorHandling(error))
 
 		return { token, data: refreshTokenUpdated }
@@ -325,7 +325,7 @@ export class AuthService {
 			},
 		})
 
-		this.utils.setDataToRedis(email, accessToken)
+		this.utils.setDataToRedis({ key: email, value: accessToken })
 
 		return {
 			type: 'Bearer',
