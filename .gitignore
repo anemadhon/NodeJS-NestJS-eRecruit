@@ -3,7 +3,7 @@
 /node_modules
 
 # File
-/src/files/resume/*
+/src/files/resumes/*
 
 # Logs
 logs
