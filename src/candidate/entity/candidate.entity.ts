@@ -2,20 +2,26 @@ import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
 import { Exclude, Expose, Type } from 'class-transformer'
 import { ApplicantEntity } from 'src/applicant/applicant.entity'
 import { CandidateExperienceEntity } from './candidate-experience.entity'
+import { CandidateResumeEntity } from './candidate-resume.entity'
 import { CandidateSkillEntity } from './candidate-skil.entity'
 import { CandidateSocialEntity } from './candidate.social.entity'
 
 export class CandidateEntity {
 	@ApiProperty()
 	id: number
+
 	@ApiProperty()
 	email: string
+
 	@ApiProperty()
 	username: string | null
+
 	@ApiProperty()
 	firstName: string
+
 	@ApiProperty()
 	lastName: string | null
+
 	@ApiProperty()
 	phone: string
 
@@ -40,6 +46,11 @@ export class CandidateEntity {
 	@Expose({ name: 'experiences' })
 	@Type(() => CandidateExperienceEntity)
 	candidateExperiences?: CandidateExperienceEntity[]
+
+	@ApiProperty()
+	@Expose({ name: 'resume' })
+	@Type(() => CandidateResumeEntity)
+	cv?: CandidateResumeEntity | null
 
 	@ApiPropertyOptional()
 	@Type(() => ApplicantEntity)
@@ -66,9 +77,7 @@ export class CandidateEntity {
 	@Exclude()
 	updatedAt: Date
 
-	constructor(
-		data: Partial<CandidateEntity & ApplicantEntity & CandidateSkillEntity>
-	) {
+	constructor(data: Partial<CandidateEntity>) {
 		Object.assign(this, data)
 	}
 }

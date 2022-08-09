@@ -131,4 +131,48 @@ export class CandidateService {
 			result: { workExperiences: result },
 		}
 	}
+
+	async uploadResume({
+		id: candidateId,
+		username,
+		usernameFromParam,
+		fileName,
+		originalName,
+		path,
+	}: CandidateEntity & { usernameFromParam: string } & {
+		fileName: string
+		originalName: string
+		path: string
+	}) {
+		if (username !== usernameFromParam) {
+			throw new ForbiddenException('You are not allowed to this action')
+		}
+
+		const candidate = await this.utils.getSingleCandidate({ username })
+
+		const resumeToSaved = `${path}//${username}^${fileName}^${originalName}`
+
+		const data = {
+			whatsapp: candidate?.candidateSocial?.whatsapp,
+			instagram: candidate?.candidateSocial?.instagram,
+			linkedin: candidate?.candidateSocial?.linkedin,
+			github: candidate?.candidateSocial?.github,
+			resume: resumeToSaved,
+			candidateId,
+		}
+
+		const result = await this.prisma.candidateSocial
+			.upsert({ where: { candidateId }, update: data, create: data })
+			.catch(error => tryCatchErrorHandling(error))
+
+		return {
+			message: 'Your resume added successfully',
+			result: {
+				resume: {
+					id: result.id,
+					resume: result.resume,
+				},
+			},
+		}
+	}
 }
