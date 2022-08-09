@@ -114,3 +114,8 @@ export class CompleteExperiencesDto {
 	@Type(() => CompleteExperienceDto)
 	experiences: CompleteExperienceDto[]
 }
+
+export class CandidateResumeDto {
+	@ApiProperty({ type: 'file' })
+	resume: any
+}
