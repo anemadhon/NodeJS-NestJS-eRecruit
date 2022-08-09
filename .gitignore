@@ -2,6 +2,9 @@
 /dist
 /node_modules
 
+# File
+/src/files/resume/*
+
 # Logs
 logs
 *.log
@@ -14,7 +17,7 @@ lerna-debug.log*
 # OS
 .DS_Store
 
-#Environment
+# Environment
 .env
 
 # Tests
