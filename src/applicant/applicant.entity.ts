@@ -7,6 +7,7 @@ import { ProcessStateEntity } from 'src/process_state/process-state.entity'
 export class ApplicantEntity {
 	@ApiProperty()
 	id: number
+
 	@ApiProperty()
 	submittedAt: string
 

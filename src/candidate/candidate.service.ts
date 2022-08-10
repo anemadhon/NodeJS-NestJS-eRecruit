@@ -71,7 +71,6 @@ export class CandidateService {
 			...skill,
 			candidateId,
 		}))
-
 		const result = await this.prisma.candidateSkill
 			.createMany({ data })
 			.catch(error => tryCatchErrorHandling(error))
@@ -96,7 +95,6 @@ export class CandidateService {
 		}
 
 		const data = { whatsapp, instagram, linkedin, github, candidateId }
-
 		const social = await this.prisma.candidateSocial
 			.upsert({ where: { candidateId }, update: data, create: data })
 			.catch(error => tryCatchErrorHandling(error))
@@ -121,7 +119,6 @@ export class CandidateService {
 			...experience,
 			candidateId,
 		}))
-
 		const result = await this.prisma.candidateExperience
 			.createMany({ data })
 			.catch(error => tryCatchErrorHandling(error))
@@ -149,9 +146,7 @@ export class CandidateService {
 		}
 
 		const candidate = await this.utils.getSingleCandidate({ username })
-
 		const resumeToSaved = `${path}//${username}^${fileName}^${originalName}`
-
 		const data = {
 			whatsapp: candidate?.candidateSocial?.whatsapp,
 			instagram: candidate?.candidateSocial?.instagram,
@@ -160,7 +155,6 @@ export class CandidateService {
 			resume: resumeToSaved,
 			candidateId,
 		}
-
 		const result = await this.prisma.candidateSocial
 			.upsert({ where: { candidateId }, update: data, create: data })
 			.catch(error => tryCatchErrorHandling(error))

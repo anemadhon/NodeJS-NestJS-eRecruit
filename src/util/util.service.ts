@@ -106,7 +106,6 @@ export class UtilService {
 			flag === 'verify'
 				? `http://localhost:3000/v1/authentication/email/${email}/verification/${code}`
 				: `http://localhost:3000/pages/aaccount/register/${code}`
-
 		const subject =
 			flag === 'verify'
 				? 'Welcome to eRecruit App! Verify your Email'

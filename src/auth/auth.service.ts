@@ -151,11 +151,9 @@ export class AuthService {
 				where: { id: user.id },
 			})
 			.catch(error => tryCatchErrorHandling(error))
-
 		const refreshTokenUpdated = await this.generateAndUpdateToken(
 			accountValidated
 		)
-
 		const cv: CandidateResumeEntity = {
 			resume: user?.candidateSocial?.resume,
 			meta: {
@@ -202,7 +200,6 @@ export class AuthService {
 		}
 
 		const refreshTokenUpdated = await this.generateAndUpdateToken(user)
-
 		let cv: CandidateResumeEntity | null = null
 
 		if ('username' in user) {
@@ -350,7 +347,6 @@ export class AuthService {
 			email: user.email,
 			username: 'nik' in user ? user.email : user.username,
 		}).catch(error => tryCatchErrorHandling(error))
-
 		const refreshTokenUpdated =
 			'nik' in user
 				? await this.utils
@@ -426,7 +422,6 @@ export class AuthService {
 			const { username } = JSON.parse(
 				Buffer.from(refreshToken.split('.')[1], 'base64').toString()
 			)
-
 			const user = await this.utils
 				.checkUserByUsername(username)
 				.catch(error => tryCatchErrorHandling(error))
