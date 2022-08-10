@@ -11,6 +11,7 @@ import {
 } from '@nestjs/common'
 import { AuthGuard } from '@nestjs/passport'
 import {
+	ApiBadRequestResponse,
 	ApiBearerAuth,
 	ApiForbiddenResponse,
 	ApiInternalServerErrorResponse,
@@ -33,6 +34,9 @@ import { AuthService } from './auth.service'
 
 @ApiOkResponse({ description: `when eveything's OK` })
 @ApiInternalServerErrorResponse({ description: `when thing's goes wrong` })
+@ApiBadRequestResponse({
+	description: `when the request wrong or not passed validation`,
+})
 @ApiTags('authentication')
 @Controller({ path: 'authentication', version: '1' })
 @UseInterceptors(ClassSerializerInterceptor)

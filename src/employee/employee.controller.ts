@@ -11,6 +11,7 @@ import {
 } from '@nestjs/common'
 import { AuthGuard } from '@nestjs/passport'
 import {
+	ApiBadRequestResponse,
 	ApiBearerAuth,
 	ApiInternalServerErrorResponse,
 	ApiNotFoundResponse,
@@ -28,6 +29,9 @@ import { EmployeeService } from './employee.service'
 @ApiOkResponse({ description: `when eveything's OK` })
 @ApiUnauthorizedResponse({ description: `when access token expired` })
 @ApiInternalServerErrorResponse({ description: `when thing's goes wrong` })
+@ApiBadRequestResponse({
+	description: `when the request wrong or not passed validation`,
+})
 @ApiTags('employee / admin')
 @ApiBearerAuth()
 @Roles('admin')

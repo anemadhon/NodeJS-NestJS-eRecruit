@@ -12,6 +12,7 @@ import {
 } from '@nestjs/common'
 import { AuthGuard } from '@nestjs/passport'
 import {
+	ApiBadRequestResponse,
 	ApiBearerAuth,
 	ApiConsumes,
 	ApiCreatedResponse,
@@ -36,6 +37,9 @@ import { FileInterceptor } from '@nestjs/platform-express'
 @ApiOkResponse({ description: `when eveything's OK` })
 @ApiUnauthorizedResponse({ description: `when access token expired` })
 @ApiInternalServerErrorResponse({ description: `when thing's goes wrong` })
+@ApiBadRequestResponse({
+	description: `when the request wrong or not passed validation`,
+})
 @ApiTags('candidate')
 @Controller({ path: 'candidates', version: '1' })
 @UseInterceptors(ClassSerializerInterceptor)
@@ -64,6 +68,9 @@ export class CandidateController {
 	@ApiForbiddenResponse({
 		description: `username not matched`,
 	})
+	@ApiCreatedResponse({
+		description: `when candidate add skills successfully`,
+	})
 	@ApiBearerAuth()
 	@UseGuards(AuthGuard('jwt'))
 	@Post(':username/completes/skills')
@@ -79,6 +86,9 @@ export class CandidateController {
 		})
 	}
 
+	@ApiCreatedResponse({
+		description: `when candidate add social media successfully`,
+	})
 	@ApiForbiddenResponse({
 		description: `username not matched`,
 	})
@@ -97,6 +107,9 @@ export class CandidateController {
 		})
 	}
 
+	@ApiCreatedResponse({
+		description: `when candidate add work experiences successfully`,
+	})
 	@ApiForbiddenResponse({
 		description: `username not matched`,
 	})
@@ -115,6 +128,9 @@ export class CandidateController {
 		})
 	}
 
+	@ApiCreatedResponse({
+		description: `when candidate add resume successfully`,
+	})
 	@ApiForbiddenResponse({
 		description: `username not matched`,
 	})
