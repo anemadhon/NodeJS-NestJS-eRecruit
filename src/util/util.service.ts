@@ -120,20 +120,20 @@ export class UtilService {
 
 	async clearAllToken(user: CandidateEntity | EmployeeEntity): Promise<void> {
 		if (user && 'nik' in user) {
-			await this.updateRefreshTokenEmployee({
+			this.updateRefreshTokenEmployee({
 				data: { refreshToken: null },
 				where: { id: user.id },
 			}).catch(error => tryCatchErrorHandling(error))
 		}
 
 		if (user && 'username' in user) {
-			await this.updateSingleCandidate({
+			this.updateSingleCandidate({
 				data: { refreshToken: null },
 				where: { id: user.id },
 			}).catch(error => tryCatchErrorHandling(error))
 		}
 
-		await this.resetRedis()
+		this.resetRedis()
 	}
 
 	async setDataToRedis({

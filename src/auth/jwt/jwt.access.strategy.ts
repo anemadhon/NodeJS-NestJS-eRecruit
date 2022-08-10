@@ -31,7 +31,7 @@ export class JwtAccessTokenStrategy extends PassportStrategy(Strategy, 'jwt') {
 			authenticatedUser &&
 			'nik' in authenticatedUser
 		) {
-			await this.utils
+			this.utils
 				.updateRefreshTokenEmployee({
 					data: { refreshToken: null },
 					where: { id: authenticatedUser.id },
@@ -44,7 +44,7 @@ export class JwtAccessTokenStrategy extends PassportStrategy(Strategy, 'jwt') {
 			authenticatedUser &&
 			'username' in authenticatedUser
 		) {
-			await this.utils
+			this.utils
 				.updateSingleCandidate({
 					data: { refreshToken: null },
 					where: { id: authenticatedUser.id },
@@ -53,7 +53,7 @@ export class JwtAccessTokenStrategy extends PassportStrategy(Strategy, 'jwt') {
 		}
 
 		if (token !== tokenFromRedis) {
-			await this.utils.resetRedis()
+			this.utils.resetRedis()
 
 			throw new UnauthorizedException(
 				'UnauthorizedException - Please login to continue'
