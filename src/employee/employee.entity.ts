@@ -1,12 +1,23 @@
+import { ApiProperty } from '@nestjs/swagger'
 import { Exclude } from 'class-transformer'
 
 export class EmployeeEntity {
+	@ApiProperty()
 	id: number
+
+	@ApiProperty()
 	nik: string
+
+	@ApiProperty()
 	email: string
+
+	@ApiProperty()
 	name: string
+
+	@ApiProperty()
 	title: string
 
+	@ApiProperty({ required: false })
 	token?: {
 		type: string
 		accessToken: string
