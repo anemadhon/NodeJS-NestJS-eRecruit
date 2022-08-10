@@ -26,25 +26,33 @@ export class JwtAccessTokenStrategy extends PassportStrategy(Strategy, 'jwt') {
 			.checkUserByUsername(username)
 			.catch(error => tryCatchErrorHandling(error))
 
+		if (
+			token !== tokenFromRedis &&
+			authenticatedUser &&
+			'nik' in authenticatedUser
+		) {
+			await this.utils
+				.updateRefreshTokenEmployee({
+					data: { refreshToken: null },
+					where: { id: authenticatedUser.id },
+				})
+				.catch(error => tryCatchErrorHandling(error))
+		}
+
+		if (
+			token !== tokenFromRedis &&
+			authenticatedUser &&
+			'username' in authenticatedUser
+		) {
+			await this.utils
+				.updateSingleCandidate({
+					data: { refreshToken: null },
+					where: { id: authenticatedUser.id },
+				})
+				.catch(error => tryCatchErrorHandling(error))
+		}
+
 		if (token !== tokenFromRedis) {
-			if (authenticatedUser && 'nik' in authenticatedUser) {
-				await this.utils
-					.updateRefreshTokenEmployee({
-						data: { refreshToken: null },
-						where: { id: authenticatedUser.id },
-					})
-					.catch(error => tryCatchErrorHandling(error))
-			}
-
-			if (authenticatedUser && 'username' in authenticatedUser) {
-				await this.utils
-					.updateSingleCandidate({
-						data: { refreshToken: null },
-						where: { id: authenticatedUser.id },
-					})
-					.catch(error => tryCatchErrorHandling(error))
-			}
-
 			await this.utils.resetRedis()
 
 			throw new UnauthorizedException(
