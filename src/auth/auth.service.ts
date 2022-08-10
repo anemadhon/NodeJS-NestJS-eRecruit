@@ -22,6 +22,7 @@ import {
 	tryCatchErrorHandling,
 } from 'src/util/util-http-error.filter'
 import { EmployeeEntity } from 'src/employee/employee.entity'
+import { CandidateResumeEntity } from 'src/candidate/entity/candidate-resume.entity'
 
 @Injectable()
 export class AuthService {
@@ -48,15 +49,25 @@ export class AuthService {
 			throw new ForbiddenException('You are not allowed to this action')
 		}
 
+		const cv: CandidateResumeEntity = {
+			resume: user?.candidateSocial?.resume,
+			meta: {
+				filename: user?.candidateSocial?.resume.split('^')[2],
+				extension: 'pdf',
+				mimetype: 'application/pdf',
+				path: user?.candidateSocial?.resume.split('//')[0],
+			},
+		}
+
 		if (user.emailIsVerified && user.username) {
 			return {
 				message: 'You have complated validatiion & verification, please login',
-				result: new CandidateEntity(user),
+				result: new CandidateEntity({ ...user, cv }),
 			}
 		}
 
 		if (user.emailIsVerified && user.passwordResetCode && !user.username) {
-			this.sendEmail(user)
+			this.sendEmail({ ...user, cv })
 		}
 
 		if (user.emailIsVerified && !user.username) {
@@ -88,10 +99,20 @@ export class AuthService {
 			throw new ForbiddenException('You are not allowed to this action')
 		}
 
+		const cv: CandidateResumeEntity = {
+			resume: user?.candidateSocial?.resume,
+			meta: {
+				filename: user?.candidateSocial?.resume.split('^')[2],
+				extension: 'pdf',
+				mimetype: 'application/pdf',
+				path: user?.candidateSocial?.resume.split('//')[0],
+			},
+		}
+
 		if (user.emailIsVerified) {
 			return {
 				message: 'You have complated validatiion & verification, please login',
-				result: new CandidateEntity(user),
+				result: new CandidateEntity({ ...user, cv }),
 			}
 		}
 
@@ -135,6 +156,16 @@ export class AuthService {
 			accountValidated
 		)
 
+		const cv: CandidateResumeEntity = {
+			resume: user?.candidateSocial?.resume,
+			meta: {
+				filename: user?.candidateSocial?.resume.split('^')[2],
+				extension: 'pdf',
+				mimetype: 'application/pdf',
+				path: user?.candidateSocial?.resume.split('//')[0],
+			},
+		}
+
 		return {
 			message: `You are validated, welcome ${
 				'username' in refreshTokenUpdated?.data
@@ -144,6 +175,7 @@ export class AuthService {
 			result: new CandidateEntity({
 				...user,
 				token: refreshTokenUpdated?.token,
+				cv,
 			}),
 		}
 	}
@@ -171,6 +203,20 @@ export class AuthService {
 
 		const refreshTokenUpdated = await this.generateAndUpdateToken(user)
 
+		let cv: CandidateResumeEntity | null = null
+
+		if ('username' in user) {
+			cv = {
+				resume: user?.candidateSocial?.resume,
+				meta: {
+					filename: user?.candidateSocial?.resume.split('^')[2],
+					extension: 'pdf',
+					mimetype: 'application/pdf',
+					path: user?.candidateSocial?.resume.split('//')[0],
+				},
+			}
+		}
+
 		return {
 			message: `You are validated, welcome ${
 				'nik' in refreshTokenUpdated?.data
@@ -180,7 +226,11 @@ export class AuthService {
 			result:
 				'nik' in refreshTokenUpdated?.data
 					? new EmployeeEntity({ ...user, token: refreshTokenUpdated?.token })
-					: new CandidateEntity({ ...user, token: refreshTokenUpdated?.token }),
+					: new CandidateEntity({
+							...user,
+							token: refreshTokenUpdated?.token,
+							cv,
+					  }),
 		}
 	}
 
@@ -233,6 +283,20 @@ export class AuthService {
 
 			this.utils.setDataToRedis({ key: user.email, value: accessToken })
 
+			let cv: CandidateResumeEntity | null = null
+
+			if ('username' in user) {
+				cv = {
+					resume: user?.candidateSocial?.resume,
+					meta: {
+						filename: user?.candidateSocial?.resume.split('^')[2],
+						extension: 'pdf',
+						mimetype: 'application/pdf',
+						path: user?.candidateSocial?.resume.split('//')[0],
+					},
+				}
+			}
+
 			return {
 				message: `You are validated, welcome ${
 					'nik' in user ? user.name : user.username
@@ -246,6 +310,7 @@ export class AuthService {
 						: new CandidateEntity({
 								...user,
 								token: { type: 'Bearer', accessToken },
+								cv,
 						  }),
 			}
 		}

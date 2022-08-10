@@ -33,6 +33,7 @@ import {
 import { CandidateEntity } from './entity/candidate.entity'
 import { CandidateService } from './candidate.service'
 import { FileInterceptor } from '@nestjs/platform-express'
+import { CandidateResumeEntity } from './entity/candidate-resume.entity'
 
 @ApiOkResponse({ description: `when eveything's OK` })
 @ApiUnauthorizedResponse({ description: `when access token expired` })
@@ -51,9 +52,19 @@ export class CandidateController {
 	@UseGuards(AuthGuard('jwt'))
 	@Get('me')
 	me(@AuthenticatedUser() authenticatedUser: CandidateEntity) {
+		const cv: CandidateResumeEntity = {
+			resume: authenticatedUser?.candidateSocial?.resume,
+			meta: {
+				filename: authenticatedUser?.candidateSocial?.resume.split('^')[2],
+				extension: 'pdf',
+				mimetype: 'application/pdf',
+				path: authenticatedUser?.candidateSocial?.resume.split('//')[0],
+			},
+		}
+
 		return {
 			message: 'Get authenticated user successfully',
-			result: new CandidateEntity(authenticatedUser),
+			result: new CandidateEntity({ ...authenticatedUser, cv }),
 		}
 	}
 
