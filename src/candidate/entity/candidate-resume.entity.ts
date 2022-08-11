@@ -7,6 +7,7 @@ export class CandidateResumeEntity {
 	@ApiProperty()
 	meta: {
 		filename: string
+		originalName: string
 		extension: 'pdf'
 		mimetype: 'application/pdf'
 		path: string

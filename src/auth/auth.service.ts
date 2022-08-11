@@ -53,6 +53,7 @@ export class AuthService {
 			resume: user?.candidateSocial?.resume,
 			meta: {
 				filename: user?.candidateSocial?.resume.split('^')[2],
+				originalName: user?.candidateSocial?.resume.split('^')[1],
 				extension: 'pdf',
 				mimetype: 'application/pdf',
 				path: user?.candidateSocial?.resume.split('//')[0],
@@ -103,6 +104,7 @@ export class AuthService {
 			resume: user?.candidateSocial?.resume,
 			meta: {
 				filename: user?.candidateSocial?.resume.split('^')[2],
+				originalName: user?.candidateSocial?.resume.split('^')[1],
 				extension: 'pdf',
 				mimetype: 'application/pdf',
 				path: user?.candidateSocial?.resume.split('//')[0],
@@ -158,6 +160,7 @@ export class AuthService {
 			resume: user?.candidateSocial?.resume,
 			meta: {
 				filename: user?.candidateSocial?.resume.split('^')[2],
+				originalName: user?.candidateSocial?.resume.split('^')[1],
 				extension: 'pdf',
 				mimetype: 'application/pdf',
 				path: user?.candidateSocial?.resume.split('//')[0],
@@ -207,6 +210,7 @@ export class AuthService {
 				resume: user?.candidateSocial?.resume,
 				meta: {
 					filename: user?.candidateSocial?.resume.split('^')[2],
+					originalName: user?.candidateSocial?.resume.split('^')[1],
 					extension: 'pdf',
 					mimetype: 'application/pdf',
 					path: user?.candidateSocial?.resume.split('//')[0],
@@ -287,6 +291,7 @@ export class AuthService {
 					resume: user?.candidateSocial?.resume,
 					meta: {
 						filename: user?.candidateSocial?.resume.split('^')[2],
+						originalName: user?.candidateSocial?.resume.split('^')[1],
 						extension: 'pdf',
 						mimetype: 'application/pdf',
 						path: user?.candidateSocial?.resume.split('//')[0],

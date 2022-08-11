@@ -41,6 +41,8 @@ export class EmployeeService {
 						meta: {
 							filename:
 								applicant?.candidate?.candidateSocial?.resume.split('^')[2],
+							originalName:
+								applicant?.candidate?.candidateSocial?.resume.split('^')[1],
 							extension: 'pdf',
 							mimetype: 'application/pdf',
 							path: applicant?.candidate?.candidateSocial?.resume.split(

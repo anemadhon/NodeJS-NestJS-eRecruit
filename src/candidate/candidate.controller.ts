@@ -58,6 +58,7 @@ export class CandidateController {
 			resume: authenticatedUser?.candidateSocial?.resume,
 			meta: {
 				filename: authenticatedUser?.candidateSocial?.resume.split('^')[2],
+				originalName: authenticatedUser?.candidateSocial?.resume.split('^')[1],
 				extension: 'pdf',
 				mimetype: 'application/pdf',
 				path: authenticatedUser?.candidateSocial?.resume.split('//')[0],
