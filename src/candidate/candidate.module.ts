@@ -9,7 +9,10 @@ import { CandidateService } from './candidate.service'
 		MulterModule.registerAsync({
 			imports: [ConfigModule],
 			useFactory: async (config: ConfigService) => ({
-				dest: config.get<string>('APP_FILE_DEST'),
+				dest:
+					config.get<string>('ENV') === 'dev'
+						? `./src/${config.get<string>('APP_FILE_DEST')}`
+						: `./dist/${config.get<string>('APP_FILE_DEST')}`,
 			}),
 			inject: [ConfigService],
 		}),
