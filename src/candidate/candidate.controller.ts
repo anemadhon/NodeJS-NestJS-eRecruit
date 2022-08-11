@@ -24,7 +24,6 @@ import {
 } from '@nestjs/swagger'
 import { AuthenticatedUser } from 'src/auth/auth-user.decorator'
 import {
-	ApplyJobDto,
 	CandidateResumeDto,
 	CompleteExperiencesDto,
 	CompleteSkillsDto,
@@ -43,6 +42,9 @@ import { RolesGuard } from 'src/auth/role/role.guard'
 @ApiBadRequestResponse({
 	description: `when the request wrong or not passed validation`,
 })
+@ApiBearerAuth()
+@Roles('candidate')
+@UseGuards(AuthGuard('jwt'), RolesGuard)
 @ApiTags('candidate')
 @Controller({ path: 'candidates', version: '1' })
 @UseInterceptors(ClassSerializerInterceptor)
@@ -50,9 +52,6 @@ export class CandidateController {
 	constructor(private readonly candidateService: CandidateService) {}
 
 	@ApiOkResponse({ description: `when eveything's OK` })
-	@ApiBearerAuth()
-	@Roles('candidate')
-	@UseGuards(AuthGuard('jwt'), RolesGuard)
 	@Get('me')
 	me(@AuthenticatedUser() authenticatedUser: CandidateEntity) {
 		const cv: CandidateResumeEntity = {
@@ -72,22 +71,11 @@ export class CandidateController {
 	}
 
 	@ApiCreatedResponse({
-		description: `when candidate applying job successfully`,
+		description: `when candidate add skills successfully`,
 	})
-	@Post('jobs/applies')
-	applies(@Body() body: ApplyJobDto) {
-		return this.candidateService.applies(body)
-	}
-
 	@ApiForbiddenResponse({
 		description: `username not matched`,
 	})
-	@ApiCreatedResponse({
-		description: `when candidate add skills successfully`,
-	})
-	@ApiBearerAuth()
-	@Roles('candidate')
-	@UseGuards(AuthGuard('jwt'), RolesGuard)
 	@Post(':username/completes/skills')
 	completeSkill(
 		@AuthenticatedUser() authenticatedUser: CandidateEntity,
@@ -107,9 +95,6 @@ export class CandidateController {
 	@ApiForbiddenResponse({
 		description: `username not matched`,
 	})
-	@ApiBearerAuth()
-	@Roles('candidate')
-	@UseGuards(AuthGuard('jwt'), RolesGuard)
 	@Post(':username/completes/socials')
 	completeSocial(
 		@AuthenticatedUser() authenticatedUser: CandidateEntity,
@@ -129,9 +114,6 @@ export class CandidateController {
 	@ApiForbiddenResponse({
 		description: `username not matched`,
 	})
-	@ApiBearerAuth()
-	@Roles('candidate')
-	@UseGuards(AuthGuard('jwt'), RolesGuard)
 	@Post(':username/completes/experiences')
 	completeExperience(
 		@AuthenticatedUser() authenticatedUser: CandidateEntity,
@@ -151,10 +133,7 @@ export class CandidateController {
 	@ApiForbiddenResponse({
 		description: `username not matched`,
 	})
-	@ApiBearerAuth()
 	@ApiConsumes('multipart/form-data')
-	@Roles('candidate')
-	@UseGuards(AuthGuard('jwt'), RolesGuard)
 	@Post(':username/resume')
 	@UseInterceptors(FileInterceptor('resume'))
 	uploadResume(

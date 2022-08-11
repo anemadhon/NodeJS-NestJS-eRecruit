@@ -3,7 +3,7 @@ import { PrismaService } from 'src/prisma/prisma.service'
 import { tryCatchErrorHandling } from 'src/util/util-http-error.filter'
 import { UtilService } from 'src/util/util.service'
 import {
-	ApplyJobDto,
+	// ApplyJobDto,
 	CompleteExperiencesDto,
 	CompleteSkillsDto,
 	CompleteSocialDto,
@@ -12,50 +12,10 @@ import { CandidateEntity } from './entity/candidate.entity'
 
 @Injectable()
 export class CandidateService {
-	constructor(private prisma: PrismaService, private utils: UtilService) {}
-
-	async applies({
-		firstName,
-		lastName,
-		email,
-		phone,
-		submittedAt,
-		processStateId,
-		jobId,
-	}: ApplyJobDto) {
-		const candidate = await this.prisma.candidate
-			.upsert({
-				where: { email },
-				update: {},
-				create: {
-					firstName,
-					lastName,
-					email,
-					phone,
-					applicants: {
-						create: {
-							submittedAt,
-							processStateId,
-							jobId,
-						},
-					},
-				},
-				include: {
-					applicants: {
-						include: {
-							job: true,
-							processState: true,
-						},
-					},
-				},
-			})
-			.catch(error => tryCatchErrorHandling(error))
-
-		return {
-			message: 'Your application is sent',
-			result: new CandidateEntity(candidate),
-		}
-	}
+	constructor(
+		private readonly prisma: PrismaService,
+		private readonly utils: UtilService
+	) {}
 
 	async completeSkill({
 		id: candidateId,
