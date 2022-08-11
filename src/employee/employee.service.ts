@@ -8,6 +8,7 @@ import { PrismaService } from 'src/prisma/prisma.service'
 import { ApplicantEntity } from 'src/applicant/applicant.entity'
 import { ApplicantsEntity } from 'src/applicant/applicants.entity'
 import { UtilService } from 'src/util/util.service'
+import { CandidateResumeEntity } from 'src/candidate/entity/candidate-resume.entity'
 
 @Injectable()
 export class EmployeeService {
@@ -29,12 +30,37 @@ export class EmployeeService {
 				},
 			})
 			.catch(error => tryCatchErrorHandling(error))
+		const candidateWithResume = applicants.map(applicant => {
+			const cv: CandidateResumeEntity = applicant?.candidate?.candidateSocial
+				?.resume
+				? {
+						resume: applicant?.candidate?.candidateSocial?.resume,
+						meta: {
+							filename:
+								applicant?.candidate?.candidateSocial?.resume.split('^')[2],
+							extension: 'pdf',
+							mimetype: 'application/pdf',
+							path: applicant?.candidate?.candidateSocial?.resume.split(
+								'//'
+							)[0],
+						},
+				  }
+				: null
+
+			return {
+				...applicant,
+				candidate: {
+					...applicant.candidate,
+					cv,
+				},
+			}
+		})
 
 		return {
 			message: applicants
 				? 'Applicants list found successfully'
 				: 'No data found',
-			result: new ApplicantsEntity({ applicants }),
+			result: new ApplicantsEntity({ applicants: candidateWithResume }),
 		}
 	}
 
