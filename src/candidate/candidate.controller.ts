@@ -134,7 +134,7 @@ export class CandidateController {
 		description: `username not matched`,
 	})
 	@ApiConsumes('multipart/form-data')
-	@Post(':username/resume')
+	@Post(':username/completes/resume')
 	@UseInterceptors(FileInterceptor('resume'))
 	uploadResume(
 		@AuthenticatedUser() authenticatedUser: CandidateEntity,
