@@ -12,7 +12,10 @@ import { CandidateResumeEntity } from 'src/candidate/entity/candidate-resume.ent
 
 @Injectable()
 export class EmployeeService {
-	constructor(private prisma: PrismaService, private utils: UtilService) {}
+	constructor(
+		private readonly prisma: PrismaService,
+		private readonly utils: UtilService
+	) {}
 
 	async getAll() {
 		const applicants = await this.prisma.applicant

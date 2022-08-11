@@ -27,9 +27,9 @@ import { CandidateResumeEntity } from 'src/candidate/entity/candidate-resume.ent
 @Injectable()
 export class AuthService {
 	constructor(
-		private jwt: JwtService,
-		private config: ConfigService,
-		private utils: UtilService
+		private readonly jwt: JwtService,
+		private readonly config: ConfigService,
+		private readonly utils: UtilService
 	) {}
 
 	async validateEmail({ email }: ValidationEmailDto) {
