@@ -172,8 +172,8 @@ export class AuthService {
 			}`,
 			result: new CandidateEntity({
 				...user,
-				token: refreshTokenUpdated?.token,
 				cv,
+				token: refreshTokenUpdated?.token,
 			}),
 		}
 	}
@@ -225,8 +225,8 @@ export class AuthService {
 					? new EmployeeEntity({ ...user, token: refreshTokenUpdated?.token })
 					: new CandidateEntity({
 							...user,
-							token: refreshTokenUpdated?.token,
 							cv,
+							token: refreshTokenUpdated?.token,
 					  }),
 		}
 	}
@@ -306,8 +306,8 @@ export class AuthService {
 						  })
 						: new CandidateEntity({
 								...user,
-								token: { type: 'Bearer', accessToken },
 								cv,
+								token: { type: 'Bearer', accessToken },
 						  }),
 			}
 		}
