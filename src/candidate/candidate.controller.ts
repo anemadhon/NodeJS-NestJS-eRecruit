@@ -34,6 +34,8 @@ import { CandidateEntity } from './entity/candidate.entity'
 import { CandidateService } from './candidate.service'
 import { FileInterceptor } from '@nestjs/platform-express'
 import { CandidateResumeEntity } from './entity/candidate-resume.entity'
+import { Roles } from 'src/auth/role/role.decorator'
+import { RolesGuard } from 'src/auth/role/role.guard'
 
 @ApiOkResponse({ description: `when eveything's OK` })
 @ApiUnauthorizedResponse({ description: `when access token expired` })
@@ -49,7 +51,8 @@ export class CandidateController {
 
 	@ApiOkResponse({ description: `when eveything's OK` })
 	@ApiBearerAuth()
-	@UseGuards(AuthGuard('jwt'))
+	@Roles('candidate')
+	@UseGuards(AuthGuard('jwt'), RolesGuard)
 	@Get('me')
 	me(@AuthenticatedUser() authenticatedUser: CandidateEntity) {
 		const cv: CandidateResumeEntity = {
@@ -83,7 +86,8 @@ export class CandidateController {
 		description: `when candidate add skills successfully`,
 	})
 	@ApiBearerAuth()
-	@UseGuards(AuthGuard('jwt'))
+	@Roles('candidate')
+	@UseGuards(AuthGuard('jwt'), RolesGuard)
 	@Post(':username/completes/skills')
 	completeSkill(
 		@AuthenticatedUser() authenticatedUser: CandidateEntity,
@@ -104,7 +108,8 @@ export class CandidateController {
 		description: `username not matched`,
 	})
 	@ApiBearerAuth()
-	@UseGuards(AuthGuard('jwt'))
+	@Roles('candidate')
+	@UseGuards(AuthGuard('jwt'), RolesGuard)
 	@Post(':username/completes/socials')
 	completeSocial(
 		@AuthenticatedUser() authenticatedUser: CandidateEntity,
@@ -125,7 +130,8 @@ export class CandidateController {
 		description: `username not matched`,
 	})
 	@ApiBearerAuth()
-	@UseGuards(AuthGuard('jwt'))
+	@Roles('candidate')
+	@UseGuards(AuthGuard('jwt'), RolesGuard)
 	@Post(':username/completes/experiences')
 	completeExperience(
 		@AuthenticatedUser() authenticatedUser: CandidateEntity,
@@ -147,7 +153,8 @@ export class CandidateController {
 	})
 	@ApiBearerAuth()
 	@ApiConsumes('multipart/form-data')
-	@UseGuards(AuthGuard('jwt'))
+	@Roles('candidate')
+	@UseGuards(AuthGuard('jwt'), RolesGuard)
 	@Post(':username/resume')
 	@UseInterceptors(FileInterceptor('resume'))
 	uploadResume(
