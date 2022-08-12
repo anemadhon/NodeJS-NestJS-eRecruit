@@ -17,18 +17,17 @@ async function bootstrap() {
 		})
 	)
 
+	const appPort = app.get<ConfigService>(ConfigService).get<number>('APP_PORT')
+	const appName = app.get<ConfigService>(ConfigService).get<string>('APP_NAME')
 	const config = new DocumentBuilder()
-		.setTitle('eRecruit API')
-		.setDescription('The eRecruit API documentation')
+		.setTitle(appName)
+		.setDescription(`${appName} documentation`)
 		.addBearerAuth()
 		.build()
-
 	const document = SwaggerModule.createDocument(app, config)
 
 	SwaggerModule.setup('api/docs', app, document)
 
-	const port = app.get<ConfigService>(ConfigService).get<number>('APP_PORT')
-
-	await app.listen(port)
+	await app.listen(appPort)
 }
 bootstrap()
