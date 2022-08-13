@@ -3,7 +3,6 @@ import { PrismaService } from 'src/prisma/prisma.service'
 import { tryCatchErrorHandling } from 'src/util/util-http-error.filter'
 import { UtilService } from 'src/util/util.service'
 import {
-	// ApplyJobDto,
 	CompleteExperiencesDto,
 	CompleteSkillsDto,
 	CompleteSocialDto,
