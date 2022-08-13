@@ -203,20 +203,19 @@ export class AuthService {
 		}
 
 		const refreshTokenUpdated = await this.generateAndUpdateToken(user)
-		let cv: CandidateResumeEntity | null = null
-
-		if ('username' in user) {
-			cv = {
-				resume: user?.candidateSocial?.resume,
-				meta: {
-					filename: user?.candidateSocial?.resume.split('^')[2],
-					originalName: user?.candidateSocial?.resume.split('^')[1],
-					extension: 'pdf',
-					mimetype: 'application/pdf',
-					path: user?.candidateSocial?.resume.split('//')[0],
-				},
-			}
-		}
+		const cv: CandidateResumeEntity =
+			'username' in user
+				? {
+						resume: user?.candidateSocial?.resume,
+						meta: {
+							filename: user?.candidateSocial?.resume.split('^')[2],
+							originalName: user?.candidateSocial?.resume.split('^')[1],
+							extension: 'pdf',
+							mimetype: 'application/pdf',
+							path: user?.candidateSocial?.resume.split('//')[0],
+						},
+				  }
+				: null
 
 		return {
 			message: `You are validated, welcome ${
@@ -281,23 +280,21 @@ export class AuthService {
 					secret: this.config.get<string>('JWT_SECRET'),
 				},
 			})
+			const cv: CandidateResumeEntity =
+				'username' in user
+					? {
+							resume: user?.candidateSocial?.resume,
+							meta: {
+								filename: user?.candidateSocial?.resume.split('^')[2],
+								originalName: user?.candidateSocial?.resume.split('^')[1],
+								extension: 'pdf',
+								mimetype: 'application/pdf',
+								path: user?.candidateSocial?.resume.split('//')[0],
+							},
+					  }
+					: null
 
 			this.utils.setDataToRedis({ key: user.email, value: accessToken })
-
-			let cv: CandidateResumeEntity | null = null
-
-			if ('username' in user) {
-				cv = {
-					resume: user?.candidateSocial?.resume,
-					meta: {
-						filename: user?.candidateSocial?.resume.split('^')[2],
-						originalName: user?.candidateSocial?.resume.split('^')[1],
-						extension: 'pdf',
-						mimetype: 'application/pdf',
-						path: user?.candidateSocial?.resume.split('//')[0],
-					},
-				}
-			}
 
 			return {
 				message: `You are validated, welcome ${
