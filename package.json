@@ -21,6 +21,9 @@
 		"test:e2e": "jest --config ./test/jest-e2e.json",
 		"test:unit": "jest -i --no-cache --watch --config jest-unit.json"
 	},
+	"prisma": {
+		"seed": "ts-node src/prisma/seed/index.ts"
+	},
 	"dependencies": {
 		"@nestjs-modules/mailer": "^1.8.1",
 		"@nestjs/common": "^9.0.7",
