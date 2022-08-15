@@ -3,10 +3,6 @@ import { AuthModule } from './auth/auth.module'
 import { CandidateModule } from './candidate/candidate.module'
 import { ProcessStateModule } from './process_state/process_state.module'
 import { EmployeeModule } from './employee/employee.module'
-import { CandidateSocialModule } from './candidate_social/candidate_social.module'
-import { CandidateExperienceModule } from './candidate_experience/candidate_experience.module'
-import { CandidateSkillModule } from './candidate_skill/candidate_skill.module'
-import { CandidateOverviewModule } from './candidate_overview/candidate_overview.module'
 import { PrismaModule } from './prisma/prisma.module'
 import { ConfigModule } from '@nestjs/config'
 import { JobModule } from './job/job.module'
@@ -25,10 +21,6 @@ import { ApplicantModule } from './applicant/applicant.module'
 		CandidateModule,
 		ProcessStateModule,
 		EmployeeModule,
-		CandidateSocialModule,
-		CandidateExperienceModule,
-		CandidateSkillModule,
-		CandidateOverviewModule,
 		PrismaModule,
 		JobModule,
 		UtilModule,
