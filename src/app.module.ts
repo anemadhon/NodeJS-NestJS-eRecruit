@@ -39,6 +39,14 @@ import 'winston-daily-rotate-file'
 						maxFiles: config.get<string>('LOG_MAX_DAY'),
 					}),
 					new winston.transports.DailyRotateFile({
+						level: 'warn',
+						filename: 'logs/app-warning-%DATE%.log',
+						datePattern: config.get<string>('LOG_DATE_FORMAT'),
+						zippedArchive: config.get<boolean>('LOG_ZIPPED'),
+						maxSize: config.get<string>('LOG_MAX_SIZE'),
+						maxFiles: config.get<string>('LOG_MAX_DAY'),
+					}),
+					new winston.transports.DailyRotateFile({
 						level: 'error',
 						filename: 'logs/app-error-%DATE%.log',
 						datePattern: config.get<string>('LOG_DATE_FORMAT'),
