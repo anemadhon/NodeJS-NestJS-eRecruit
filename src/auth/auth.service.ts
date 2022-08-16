@@ -38,7 +38,9 @@ export class AuthService {
 			.catch(error => tryCatchErrorHandling(error))
 
 		if (!user) {
-			throw new ForbiddenException('You are not allowed to this action')
+			throw new ForbiddenException(
+				'ForbiddenException - You are not allowed to this action'
+			)
 		}
 
 		const userHaveNotPassedInitialState =
@@ -46,7 +48,9 @@ export class AuthService {
 				.processStateId !== 2
 
 		if (userHaveNotPassedInitialState) {
-			throw new ForbiddenException('You are not allowed to this action')
+			throw new ForbiddenException(
+				'ForbiddenException - You are not allowed to this action'
+			)
 		}
 
 		const cv: CandidateResumeEntity = {
@@ -90,14 +94,18 @@ export class AuthService {
 			.catch(error => tryCatchErrorHandling(error))
 
 		if (!user) {
-			throw new ForbiddenException('You are not allowed to this action')
+			throw new ForbiddenException(
+				'ForbiddenException - You are not allowed to this action'
+			)
 		}
 
 		const emailVerificationCodeNotMatched =
 			user.emailVerificationCode !== emailVerificationCode
 
 		if (emailVerificationCodeNotMatched) {
-			throw new ForbiddenException('You are not allowed to this action')
+			throw new ForbiddenException(
+				'ForbiddenException - You are not allowed to this action'
+			)
 		}
 
 		const cv: CandidateResumeEntity = {
@@ -140,7 +148,9 @@ export class AuthService {
 			.catch(error => tryCatchErrorHandling(error))
 
 		if (!user) {
-			throw new ForbiddenException('You are not allowed to this action')
+			throw new ForbiddenException(
+				'ForbiddenException - You are not allowed to this action'
+			)
 		}
 
 		const accountValidated = await this.utils
@@ -186,7 +196,8 @@ export class AuthService {
 			.checkUserByUsername(username)
 			.catch(error => tryCatchErrorHandling(error))
 
-		if (!user) throw new ForbiddenException('Credentials incorrect')
+		if (!user)
+			throw new ForbiddenException('ForbiddenException - Credentials incorrect')
 
 		if (user.refreshToken) {
 			throw new UnprocessableEntityException(
@@ -199,7 +210,7 @@ export class AuthService {
 			.catch(error => tryCatchErrorHandling(error))
 
 		if (!isPasswordMatches) {
-			throw new ForbiddenException('Credentials incorrect')
+			throw new ForbiddenException('ForbiddenException - Credentials incorrect')
 		}
 
 		const refreshTokenUpdated = await this.generateAndUpdateToken(user)

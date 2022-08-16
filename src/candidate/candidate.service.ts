@@ -23,7 +23,9 @@ export class CandidateService {
 		skills,
 	}: CandidateEntity & CompleteSkillsDto & { usernameFromParam: string }) {
 		if (username !== usernameFromParam) {
-			throw new ForbiddenException('You are not allowed to this action')
+			throw new ForbiddenException(
+				'ForbiddenException - You are not allowed to this action'
+			)
 		}
 
 		const data = skills.map(skill => ({
@@ -50,7 +52,9 @@ export class CandidateService {
 		github,
 	}: CandidateEntity & CompleteSocialDto & { usernameFromParam: string }) {
 		if (username !== usernameFromParam) {
-			throw new ForbiddenException('You are not allowed to this action')
+			throw new ForbiddenException(
+				'ForbiddenException - You are not allowed to this action'
+			)
 		}
 
 		const data = { whatsapp, instagram, linkedin, github, candidateId }
@@ -71,7 +75,9 @@ export class CandidateService {
 		experiences,
 	}: CandidateEntity & CompleteExperiencesDto & { usernameFromParam: string }) {
 		if (username !== usernameFromParam) {
-			throw new ForbiddenException('You are not allowed to this action')
+			throw new ForbiddenException(
+				'ForbiddenException - You are not allowed to this action'
+			)
 		}
 
 		const data = experiences.map(experience => ({
@@ -101,7 +107,9 @@ export class CandidateService {
 		path: string
 	}) {
 		if (username !== usernameFromParam) {
-			throw new ForbiddenException('You are not allowed to this action')
+			throw new ForbiddenException(
+				'ForbiddenException - You are not allowed to this action'
+			)
 		}
 
 		const candidate = await this.utils.getSingleCandidate({ username })
