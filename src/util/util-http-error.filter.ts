@@ -60,7 +60,7 @@ export class ResponseErrorExceptionFilter implements ExceptionFilter {
 		const code = getStatusCode(exception)
 		const message = getErrorMessage(exception)
 
-		if (code >= 500) {
+		if (code >= 500 && code < 600) {
 			this.logger.error('log message')
 		}
 
