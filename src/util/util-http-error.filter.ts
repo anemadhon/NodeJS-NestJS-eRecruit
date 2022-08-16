@@ -1,7 +1,9 @@
-import { ExceptionFilter, Catch, ArgumentsHost } from '@nestjs/common'
+import { ExceptionFilter, Catch, ArgumentsHost, Inject } from '@nestjs/common'
 import { Response } from 'express'
 import { IncomingMessage } from 'http'
 import { HttpException, HttpStatus } from '@nestjs/common'
+import { WINSTON_MODULE_PROVIDER } from 'nest-winston'
+import { Logger } from 'winston'
 
 export const getStatusCode = (exception: unknown): number => {
 	return exception instanceof HttpException
@@ -47,12 +49,24 @@ export const tryCatchErrorHandling = (error: ExceptionInterface) => {
 
 @Catch()
 export class ResponseErrorExceptionFilter implements ExceptionFilter {
+	constructor(
+		@Inject(WINSTON_MODULE_PROVIDER) private readonly logger: Logger
+	) {}
+
 	catch(exception: ExceptionInterface, host: ArgumentsHost) {
 		const ctx = host.switchToHttp()
 		const response = ctx.getResponse<Response>()
 		const request = ctx.getRequest<IncomingMessage>()
 		const code = getStatusCode(exception)
 		const message = getErrorMessage(exception)
+
+		if (code >= 500) {
+			this.logger.error('log message')
+		}
+
+		if (code >= 400 && code < 500) {
+			this.logger.warn('log message')
+		}
 
 		response.status(code).json({
 			success: false,
