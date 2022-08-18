@@ -82,17 +82,17 @@ export class AuthService {
 		}
 
 		if (user.emailIsVerified && user.passwordResetCode && !user.username) {
-			this.sendEmail({ ...user, cv })
+			return this.sendEmail({ ...user, cv })
 		}
 
 		if (user.emailIsVerified && !user.username) {
-			this.updateAndSendEmail({
+			return this.updateAndSendEmail({
 				data: { passwordResetCode: this.utils.generateUUID() },
 				where: { id: user.id },
 			})
 		}
 
-		this.updateAndSendEmail({
+		return this.updateAndSendEmail({
 			data: { emailVerificationCode: this.utils.generateUUID() },
 			where: { id: user.id },
 		})
@@ -383,7 +383,7 @@ export class AuthService {
 			} at ${Date.now()}. Reason: ${reason}`
 		)
 
-		this.sendEmail(updatedData)
+		return this.sendEmail(updatedData)
 	}
 
 	private sendEmail(user: CandidateEntity) {
