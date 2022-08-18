@@ -86,16 +86,16 @@ export class AuthService {
 		}
 
 		if (user.emailIsVerified && !user.username) {
-			this.updateAndSendEmail(
-				{ passwordResetCode: this.utils.generateUUID() },
-				{ id: user.id }
-			)
+			this.updateAndSendEmail({
+				data: { passwordResetCode: this.utils.generateUUID() },
+				where: { id: user.id },
+			})
 		}
 
-		this.updateAndSendEmail(
-			{ emailVerificationCode: this.utils.generateUUID() },
-			{ id: user.id }
-		)
+		this.updateAndSendEmail({
+			data: { emailVerificationCode: this.utils.generateUUID() },
+			where: { id: user.id },
+		})
 	}
 
 	async verifyEmail({ email, emailVerificationCode }: VerificationEmailDto) {
@@ -142,14 +142,14 @@ export class AuthService {
 			}
 		}
 
-		this.updateAndSendEmail(
-			{
+		this.updateAndSendEmail({
+			data: {
 				passwordResetCode: this.utils.generateUUID(),
 				emailIsVerified: true,
 				emailVerificationCode: null,
 			},
-			{ id: user.id }
-		)
+			where: { id: user.id },
+		})
 	}
 
 	async validateAccount({
@@ -291,7 +291,7 @@ export class AuthService {
 			.verifyAsync(refreshToken, {
 				secret: this.config.get<string>('JWT_REFRESH_SECRET'),
 			})
-			.catch(error => this.handleRefreshTokenExipred(error, refreshToken))
+			.catch(error => this.handleRefreshTokenExipred({ error, refreshToken }))
 
 		if ('username' in payload) {
 			const tokenFromRedis = await this.utils.getDataToRedis(payload.email)
@@ -362,10 +362,13 @@ export class AuthService {
 		}
 	}
 
-	private async updateAndSendEmail<TDataToUpdate>(
-		data: TDataToUpdate,
+	private async updateAndSendEmail<TDataToUpdate>({
+		data,
+		where,
+	}: {
+		data: TDataToUpdate
 		where: { id: number }
-	) {
+	}) {
 		const updatedData = await this.utils
 			.updateSingleCandidate({ data, where })
 			.catch(error => tryCatchErrorHandling(error))
@@ -483,10 +486,13 @@ export class AuthService {
 		return this.jwt.signAsync(payload, options)
 	}
 
-	private async handleRefreshTokenExipred(
-		error: ExceptionInterface,
+	private async handleRefreshTokenExipred({
+		error,
+		refreshToken,
+	}: {
+		error: ExceptionInterface
 		refreshToken: string
-	) {
+	}) {
 		if ('message' in error && error?.message === 'jwt expired') {
 			const { username } = JSON.parse(
 				Buffer.from(refreshToken.split('.')[1], 'base64').toString()
