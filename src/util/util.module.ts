@@ -12,7 +12,7 @@ import * as redisStore from 'cache-manager-redis-store'
 			useFactory: async (config: ConfigService) => ({
 				transport: {
 					host: config.get<string>('MAIL_HOST'),
-					secure: config.get<boolean>('MAIL_SECURE'),
+					secure: config.get('MAIL_SECURE') === 'false' ? false : true,
 					port: config.get<number>('MAIL_PORT'),
 					auth: {
 						user: config.get<string>('MAIL_USER'),
