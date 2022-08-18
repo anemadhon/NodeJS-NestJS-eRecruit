@@ -1,5 +1,6 @@
 import {
 	ForbiddenException,
+	Inject,
 	Injectable,
 	UnauthorizedException,
 	UnprocessableEntityException,
@@ -23,13 +24,16 @@ import {
 } from 'src/util/util-http-error.filter'
 import { EmployeeEntity } from 'src/employee/employee.entity'
 import { CandidateResumeEntity } from 'src/candidate/entity/candidate-resume.entity'
+import { WINSTON_MODULE_PROVIDER } from 'nest-winston'
+import { Logger } from 'winston'
 
 @Injectable()
 export class AuthService {
 	constructor(
 		private readonly jwt: JwtService,
 		private readonly config: ConfigService,
-		private readonly utils: UtilService
+		private readonly utils: UtilService,
+		@Inject(WINSTON_MODULE_PROVIDER) private readonly logger: Logger
 	) {}
 
 	async validateEmail({ email }: ValidationEmailDto) {
@@ -65,6 +69,12 @@ export class AuthService {
 		}
 
 		if (user.emailIsVerified && user.username) {
+			this.logger.info(
+				`${
+					user.username
+				} try to access validateEmail at ${Date.now()}, but he did it`
+			)
+
 			return {
 				message: 'You have complated validatiion & verification, please login',
 				result: new CandidateEntity({ ...user, cv }),
@@ -120,6 +130,12 @@ export class AuthService {
 		}
 
 		if (user.emailIsVerified) {
+			this.logger.info(
+				`${
+					user.username
+				} try to access verifyEmail at ${Date.now()}, but he did it`
+			)
+
 			return {
 				message: 'You have complated validatiion & verification, please login',
 				result: new CandidateEntity({ ...user, cv }),
@@ -177,6 +193,16 @@ export class AuthService {
 			},
 		}
 
+		this.logger.info(
+			`${
+				refreshTokenUpdated.data.email
+			} successfully create an account at ${Date.now()}${
+				'username' in refreshTokenUpdated?.data
+					? ', his username is ' + refreshTokenUpdated?.data?.username
+					: ''
+			}`
+		)
+
 		return {
 			message: `You are validated, welcome ${
 				'username' in refreshTokenUpdated?.data
@@ -228,6 +254,10 @@ export class AuthService {
 				  }
 				: null
 
+		this.logger.info(
+			`${refreshTokenUpdated.data.email} successfully login at ${Date.now()}`
+		)
+
 		return {
 			message: `You are validated, welcome ${
 				'nik' in refreshTokenUpdated?.data
@@ -247,6 +277,8 @@ export class AuthService {
 
 	logout(user: CandidateEntity | EmployeeEntity) {
 		this.utils.clearAllToken(user)
+
+		this.logger.info(`${user.email} successfully logout at ${Date.now()}`)
 
 		return {
 			message: 'Logout Successfully',
@@ -307,6 +339,10 @@ export class AuthService {
 
 			this.utils.setDataToRedis({ key: user.email, value: accessToken })
 
+			this.logger.info(
+				`${user.email} successfully refresh his access token at ${Date.now()}`
+			)
+
 			return {
 				message: `You are validated, welcome ${
 					'nik' in user ? user.name : user.username
@@ -334,6 +370,16 @@ export class AuthService {
 			.updateSingleCandidate({ data, where })
 			.catch(error => tryCatchErrorHandling(error))
 
+		let reason = updatedData.emailIsVerified ? 'reset password' : 'verify email'
+
+		reason = updatedData.username ? 'resend en email' : reason
+
+		this.logger.info(
+			`sistem send an email to ${
+				updatedData.email
+			} at ${Date.now()}. Reason: ${reason}`
+		)
+
 		this.sendEmail(updatedData)
 	}
 
@@ -347,6 +393,16 @@ export class AuthService {
 				flag: user.emailIsVerified ? 'reset' : 'verify',
 			})
 			.catch(error => tryCatchErrorHandling(error))
+
+		let reason = user.emailIsVerified ? 'reset password' : 'verify email'
+
+		reason = user.username ? 'resend en email' : reason
+
+		this.logger.info(
+			`sistem send an email to ${
+				user.email
+			} at ${Date.now()}. Reason: ${reason}`
+		)
 
 		return {
 			message: 'Please check your email to continue',
