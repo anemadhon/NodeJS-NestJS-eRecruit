@@ -406,7 +406,7 @@ export class AuthService {
 		}
 	}
 
-	@OnEvent('send-email')
+	@OnEvent('send-email', { async: true })
 	private sendEmail({ user }: SendEmailEvent) {
 		this.utils
 			.sendAnEmail({
