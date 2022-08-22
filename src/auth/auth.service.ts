@@ -380,14 +380,12 @@ export class AuthService {
 			.updateSingleCandidate({ data, where })
 			.catch(error => tryCatchErrorHandling(error))
 
-		let reason = updatedData.emailIsVerified ? 'reset password' : 'verify email'
-
-		reason = updatedData.username ? 'resend en email' : reason
-
 		this.logger.info(
-			`sistem send an email to ${
+			`${
 				updatedData.email
-			} at ${Date.now()}. Reason: ${reason}`
+			} data updated at ${Date.now()} successfully. Data to update: ${JSON.stringify(
+				data
+			)}. Updated Data: ${JSON.stringify(updatedData)}`
 		)
 
 		return this.sendEmail(updatedData)
@@ -409,7 +407,7 @@ export class AuthService {
 		reason = user.username ? 'resend en email' : reason
 
 		this.logger.info(
-			`sistem send an email to ${
+			`email sent by system to ${
 				user.email
 			} at ${Date.now()}. Reason: ${reason}`
 		)
