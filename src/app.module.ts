@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common'
 import { AuthModule } from './auth/auth.module'
 import { CandidateModule } from './candidate/candidate.module'
-import { ProcessStateModule } from './process_state/process_state.module'
+import { ProcessStateModule } from './process_state/process-state.module'
 import { EmployeeModule } from './employee/employee.module'
 import { PrismaModule } from './prisma/prisma.module'
 import { ConfigModule, ConfigService } from '@nestjs/config'
