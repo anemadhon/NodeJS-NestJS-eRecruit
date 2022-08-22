@@ -27,6 +27,8 @@ import { CandidateResumeEntity } from 'src/candidate/entity/candidate-resume.ent
 import { WINSTON_MODULE_PROVIDER } from 'nest-winston'
 import { Logger } from 'winston'
 import { ProcessStateGrade } from 'src/process_state/process-state.enum'
+import { EventEmitter2, OnEvent } from '@nestjs/event-emitter'
+import { SendEmailEvent } from 'src/util/event/send-email.event'
 
 @Injectable()
 export class AuthService {
@@ -34,6 +36,7 @@ export class AuthService {
 		private readonly jwt: JwtService,
 		private readonly config: ConfigService,
 		private readonly utils: UtilService,
+		private readonly eventEmitter: EventEmitter2,
 		@Inject(WINSTON_MODULE_PROVIDER) private readonly logger: Logger
 	) {}
 
@@ -79,7 +82,12 @@ export class AuthService {
 		}
 
 		if (user.emailIsVerified && user.passwordResetCode && !user.username) {
-			return this.sendEmail({ ...user, cv })
+			this.eventEmitter.emit('send-email', new SendEmailEvent({ ...user, cv }))
+
+			return {
+				message: 'Please check your email to continue',
+				result: new CandidateEntity({ ...user, cv }),
+			}
 		}
 
 		if (user.emailIsVerified && !user.username) {
@@ -390,10 +398,16 @@ export class AuthService {
 			} at ${Date.now()}. Reason: ${reason}`
 		)
 
-		return this.sendEmail(updatedData)
+		this.eventEmitter.emit('send-email', new SendEmailEvent(updatedData))
+
+		return {
+			message: 'Please check your email to continue',
+			result: new CandidateEntity(updatedData),
+		}
 	}
 
-	private sendEmail(user: CandidateEntity) {
+	@OnEvent('send-email')
+	private sendEmail({ user }: SendEmailEvent) {
 		this.utils
 			.sendAnEmail({
 				email: user.email,
@@ -413,11 +427,6 @@ export class AuthService {
 				user.email
 			} at ${Date.now()}. Reason: ${reason}`
 		)
-
-		return {
-			message: 'Please check your email to continue',
-			result: new CandidateEntity(user),
-		}
 	}
 
 	private async generateAndUpdateToken(user: CandidateEntity | EmployeeEntity) {

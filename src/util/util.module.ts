@@ -3,6 +3,7 @@ import { CacheModule, Global, Module } from '@nestjs/common'
 import { ConfigModule, ConfigService } from '@nestjs/config'
 import { UtilService } from './util.service'
 import * as redisStore from 'cache-manager-redis-store'
+import { EventEmitterModule } from '@nestjs/event-emitter'
 
 @Global()
 @Module({
@@ -35,6 +36,7 @@ import * as redisStore from 'cache-manager-redis-store'
 			}),
 			inject: [ConfigService],
 		}),
+		EventEmitterModule.forRoot(),
 	],
 	providers: [UtilService],
 	exports: [UtilService],
