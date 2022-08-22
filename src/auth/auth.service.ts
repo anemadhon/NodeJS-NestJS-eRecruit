@@ -26,6 +26,7 @@ import { EmployeeEntity } from 'src/employee/employee.entity'
 import { CandidateResumeEntity } from 'src/candidate/entity/candidate-resume.entity'
 import { WINSTON_MODULE_PROVIDER } from 'nest-winston'
 import { Logger } from 'winston'
+import { ProcessStateGrade } from 'src/process_state/process-state.enum'
 
 @Injectable()
 export class AuthService {
@@ -358,10 +359,15 @@ export class AuthService {
 		}
 	}
 
-    private isCandidateOnInitialState(user: CandidateEntity) {
-        return user.applicants.find(applicants => applicants.candidateId === user.id)
-        .processStateId !== 2
-    }
+	private isCandidateOnInitialState(user: CandidateEntity) {
+		const candidateState: ProcessStateGrade =
+			ProcessStateGrade[`State${this.config.get('APP_PROCESS_STATE')}`]
+
+		return (
+			user.applicants.find(applicants => applicants.candidateId === user.id)
+				.processStateId !== candidateState
+		)
+	}
 
 	private async updateAndSendEmail<TDataToUpdate>({
 		data,
