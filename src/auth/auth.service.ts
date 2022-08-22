@@ -47,11 +47,7 @@ export class AuthService {
 			)
 		}
 
-		const userHaveNotPassedInitialState =
-			user.applicants.find(applicants => applicants.candidateId === user.id)
-				.processStateId !== 2
-
-		if (userHaveNotPassedInitialState) {
+		if (this.isCandidateOnInitialState(user)) {
 			throw new ForbiddenException(
 				'ForbiddenException - You are not allowed to this action'
 			)
@@ -361,6 +357,11 @@ export class AuthService {
 			}
 		}
 	}
+
+    private isCandidateOnInitialState(user: CandidateEntity) {
+        return user.applicants.find(applicants => applicants.candidateId === user.id)
+        .processStateId !== 2
+    }
 
 	private async updateAndSendEmail<TDataToUpdate>({
 		data,
