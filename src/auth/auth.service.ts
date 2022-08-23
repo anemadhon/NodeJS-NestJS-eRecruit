@@ -421,7 +421,7 @@ export class AuthService {
 		reason = user.username ? 'resend en email' : reason
 
 		this.logger.info(
-			`system sent an email to ${
+			`email sent by system to ${
 				user.email
 			} at ${Date.now()} successfully. Reason: ${reason}`
 		)
